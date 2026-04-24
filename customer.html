@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>FZZAIN RECOND CAR</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#0b0b0b;
+color:white;
+}
+
+.container{
+max-width:850px;
+margin:auto;
+padding:20px;
+}
+
+h2{text-align:center;}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:none;
+border-radius:8px;
+}
+
+h4{
+margin:10px 0 5px;
+}
+
+.btn-group{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+margin-bottom:10px;
+}
+
+.btn-group button{
+flex:1;
+padding:8px;
+border:none;
+border-radius:6px;
+background:#333;
+color:white;
+cursor:pointer;
+font-size:12px;
+}
+
+.btn-group button:hover{
+background:#25d366;
+}
+
+/* 🚗 CARD STYLE PRO */
+.card{
+background:#1a1a1a;
+padding:15px;
+margin:12px 0;
+border-radius:12px;
+overflow:hidden;
+}
+
+/* 🖼️ IMAGE */
+.card img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+/* 💰 PRICE BIG */
+.card h2{
+font-size:28px;
+color:#25d366;
+margin:5px 0;
+}
+
+/* 🚗 NAME */
+.card h3{
+font-size:20px;
+margin:5px 0;
+}
+
+/* 📄 TEXT */
+.card p{
+margin:4px 0;
+color:#ddd;
+}
+
+/* BUTTON */
+button.action{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:#25d366;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🚗 FZZAIN RECOND CAR</h2>
+
+<!-- SEARCH -->
+<input id="search" placeholder="🔍 Cari kereta..." onkeyup="loadCars()">
+
+<!-- BRAND -->
+<h4>🏷 Brand</h4>
+<div class="btn-group">
+<button onclick="setBrand('all')">ALL</button>
+<button onclick="setBrand('Mercedes')">Mercedes</button>
+<button onclick="setBrand('BMW')">BMW</button>
+<button onclick="setBrand('Toyota')">Toyota</button>
+<button onclick="setBrand('Honda')">Honda</button>
+<button onclick="setBrand('Nissan')">Nissan</button>
+<button onclick="setBrand('Mazda')">Mazda</button>
+<button onclick="setBrand('Porsche')">Porsche</button>
+</div>
+
+<!-- YEAR (2020–2026) -->
+<h4>📅 Tahun</h4>
+<div class="btn-group">
+<button onclick="setYear('all')">ALL</button>
+<button onclick="setYear('2026')">2026</button>
+<button onclick="setYear('2025')">2025</button>
+<button onclick="setYear('2024')">2024</button>
+<button onclick="setYear('2023')">2023</button>
+<button onclick="setYear('2022')">2022</button>
+<button onclick="setYear('2021')">2021</button>
+<button onclick="setYear('2020')">2020</button>
+</div>
+
+<div id="list"></div>
+
+</div>
+
+<script>
+
+let phone = "601136756741";
+
+let currentBrand = "all";
+let currentYear = "all";
+
+// ================= DEMO DATA =================
+if(!localStorage.getItem("cars")){
+localStorage.setItem("cars", JSON.stringify([
+{brand:"BMW", name:"BMW 320i", year:"2020", mileage:"30000km", price:"145000", image:"https://via.placeholder.com/600x350"},
+{brand:"Mercedes", name:"Mercedes C200", year:"2021", mileage:"45000km", price:"160000", image:"https://via.placeholder.com/600x350"},
+{brand:"Toyota", name:"Toyota Vios", year:"2023", mileage:"20000km", price:"85000", image:"https://via.placeholder.com/600x350"},
+{brand:"Honda", name:"Honda Civic", year:"2024", mileage:"15000km", price:"120000", image:"https://via.placeholder.com/600x350"},
+{brand:"Porsche", name:"Porsche Cayenne", year:"2025", mileage:"5000km", price:"550000", image:"https://via.placeholder.com/600x350"}
+]));
+}
+
+// ================= FILTER BRAND =================
+function setBrand(b){
+currentBrand = b;
+loadCars();
+}
+
+// ================= FILTER YEAR =================
+function setYear(y){
+currentYear = y;
+loadCars();
+}
+
+// ================= LOAD =================
+function loadCars(){
+
+let cars = JSON.parse(localStorage.getItem("cars"));
+let list = document.getElementById("list");
+let keyword = document.getElementById("search").value.toLowerCase();
+
+list.innerHTML = "";
+
+cars
+.filter(c=>{
+
+let matchBrand = (currentBrand === "all") || (c.brand === currentBrand);
+
+let matchYear = (currentYear === "all") || (c.year === currentYear);
+
+let matchSearch = c.name.toLowerCase().includes(keyword);
+
+return matchBrand && matchYear && matchSearch;
+
+})
+.forEach(c=>{
+
+list.innerHTML += `
+<div class="card">
+
+<!-- 🖼️ IMAGE -->
+<img src="${c.image}">
+
+<!-- 💰 PRICE BIG -->
+<h2>RM ${c.price}</h2>
+
+<!-- 🚗 NAME -->
+<h3>${c.name}</h3>
+
+<!-- 📅 YEAR -->
+<p>📅 Tahun: ${c.year}</p>
+
+<!-- 📊 MILEAGE -->
+<p>📊 Mileage: ${c.mileage}</p>
+
+<!-- 🏷 BRAND -->
+<p>🏷 Brand: ${c.brand}</p>
+
+<!-- 📄 DETAIL -->
+<p>Full spec available. Sila hubungi untuk maklumat lanjut.</p>
+
+<!-- 📲 LOAN BUTTON -->
+<button class="action" onclick="applyLoan('${c.name}','${c.price}')">
+📲 APPLY LOAN WHATSAPP
+</button>
+
+</div>
+`;
+
+});
+
+}
+
+// ================= WHATSAPP =================
+function applyLoan(model, price){
+
+let name = prompt("Nama anda:");
+if(!name) return;
+
+let salary = prompt("Gaji anda (RM):");
+if(!salary) return;
+
+let msg = `
+📝 APPLY LOAN REQUEST
+
+🚗 Model : ${model}
+💰 Harga : RM${price}
+
+👤 Nama : ${name}
+💼 Gaji : RM${salary}
+
+📌 Sila semak kelayakan loan & monthly installment
+`;
+
+let url = "https://wa.me/"601136756741"?text=" + encodeURIComponent(msg);
+
+window.open(url, "_blank");
+
+}
+
+// INIT
+loadCars();
+
+</script>
+
+</body>
+</html>
