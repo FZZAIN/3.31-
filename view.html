@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BossFANZ VRODA - Showroom Kereta</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+
+body{
+background:#0d0d0d;
+color:white;
+}
+
+header{
+background:linear-gradient(90deg,#111,#222,#111);
+padding:20px;
+text-align:center;
+font-size:28px;
+font-weight:bold;
+letter-spacing:2px;
+color:#ffd700;
+}
+
+.sub{
+text-align:center;
+padding:10px;
+color:#aaa;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:20px;
+}
+
+.card{
+background:#1a1a1a;
+border-radius:15px;
+overflow:hidden;
+padding-bottom:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.5);
+}
+
+.card img{
+width:100%;
+height:220px;
+object-fit:cover;
+}
+
+.info{
+padding:15px;
+}
+
+h2{
+margin-bottom:10px;
+}
+
+.detail{
+color:#ccc;
+margin:5px 0;
+}
+
+.price{
+font-size:24px;
+color:#00ff90;
+font-weight:bold;
+margin-top:10px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:8px;
+border:none;
+border-radius:8px;
+outline:none;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:#25d366;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#1ebc59;
+}
+
+footer{
+text-align:center;
+padding:25px;
+color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<header>BossFANZ VRODA</header>
+<div class="sub">Showroom Kereta Premium Malaysia</div>
+
+<div class="container">
+
+<!-- BMW -->
+<div class="card">
+<img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d">
+
+<div class="info">
+<h2>BMW 320i</h2>
+<div class="detail">Tahun: 2020</div>
+<div class="detail">Mileage: 45,000 KM</div>
+<div class="price">RM145,000</div>
+
+<input type="text" id="name_BMW320i" placeholder="Nama">
+<input type="number" id="salary_BMW320i" placeholder="Gaji">
+
+<button onclick="sendLoan('BMW320i','145000')">
+WhatsApp Loan BMW
+</button>
+
+</div>
+</div>
+
+<!-- Mercedes -->
+<div class="card">
+<img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341">
+
+<div class="info">
+<h2>Mercedes C200</h2>
+<div class="detail">Tahun: 2019</div>
+<div class="detail">Mileage: 58,000 KM</div>
+<div class="price">RM168,000</div>
+
+<input type="text" id="name_MercedesC200" placeholder="Nama">
+<input type="number" id="salary_MercedesC200" placeholder="Gaji">
+
+<button onclick="sendLoan('MercedesC200','168000')">
+WhatsApp Loan Mercedes
+</button>
+
+</div>
+</div>
+
+<!-- Honda -->
+<div class="card">
+<img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70">
+
+<div class="info">
+<h2>Honda Civic FC</h2>
+<div class="detail">Tahun: 2021</div>
+<div class="detail">Mileage: 22,000 KM</div>
+<div class="price">RM118,000</div>
+
+<input type="text" id="name_HondaCivicFC" placeholder="Nama">
+<input type="number" id="salary_HondaCivicFC" placeholder="Gaji">
+
+<button onclick="sendLoan('HondaCivicFC','118000')">
+WhatsApp Loan Honda
+</button>
+
+</div>
+</div>
+
+</div>
+
+<footer>© 2026 BossFANZ VRODA</footer>
+
+<script>
+
+function sendLoan(carName, carPrice){
+
+let name = document.getElementById("name_" + carName).value.trim();
+let salary = document.getElementById("salary_" + carName).value.trim();
+
+if(name === "" || salary === ""){
+alert("Sila isi nama dan gaji!");
+return;
+}
+
+let phone = "601136756741";
+
+let msg =
+"📝 APPLY LOAN REQUEST\n\n" +
+"🚗 Model : " + carName + "\n" +
+"💰 Harga : RM" + carPrice + "\n\n" +
+"👤 Nama : " + name + "\n" +
+"💼 Gaji : RM" + salary + "\n\n" +
+"📌 Sila semak kelayakan loan & monthly installment";
+
+let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg);
+
+window.open(url, "_blank");
+
+}
+
+</script>
+
+</body>
+</html>
