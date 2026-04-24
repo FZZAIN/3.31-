@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FZZAIN RECOND CAR</title>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Arial;
+background:#0b0b0b;
+color:white;
+}
+
+.container{
+max-width:850px;
+margin:auto;
+padding:12px;
+}
+
+h2{
+text-align:center;
+font-size:24px;
+margin:10px 0 15px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:none;
+border-radius:8px;
+font-size:14px;
+}
+
+.btn-group{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:6px;
+margin-bottom:10px;
+}
+
+.btn-group button{
+padding:9px;
+border:none;
+border-radius:6px;
+background:#333;
+color:white;
+cursor:pointer;
+font-size:12px;
+}
+
+.btn-group button:hover{
+background:#25d366;
+}
+
+.card{
+background:#1a1a1a;
+padding:12px;
+margin:10px 0;
+border-radius:12px;
+}
+
+.card img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.card h2{
+font-size:22px;
+color:#25d366;
+margin:4px 0;
+text-align:left;
+}
+
+.card h3{
+font-size:17px;
+margin:4px 0;
+}
+
+.card p{
+margin:4px 0;
+font-size:13px;
+color:#ddd;
+}
+
+/* BUTTON LOAN */
+.loan-btn{
+width:100%;
+padding:11px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:#25d366;
+color:white;
+font-weight:bold;
+font-size:14px;
+cursor:pointer;
+}
+
+.loan-btn:hover{
+background:#1fa855;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🚗 FZZAIN RECOND CAR</h2>
+
+<input id="search" placeholder="🔍 Cari kereta..." onkeyup="renderCars()">
+
+<div class="btn-group">
+<button onclick="setBrand('all')">ALL</button>
+<button onclick="setBrand('BMW')">BMW</button>
+<button onclick="setBrand('Mercedes')">Mercedes</button>
+<button onclick="setBrand('Toyota')">Toyota</button>
+</div>
+
+<div class="btn-group">
+<button onclick="setYear('all')">ALL</button>
+<button onclick="setYear('2024')">2024</button>
+<button onclick="setYear('2023')">2023</button>
+<button onclick="setYear('2022')">2022</button>
+</div>
+
+<div id="list"></div>
+
+</div>
+
+<script>
+
+let phone="601136756741";
+let currentBrand="all";
+let currentYear="all";
+
+let allCars = [
+{
+name:"BMW M3 Competition",
+price:"285000",
+brand:"BMW",
+year:"2024",
+mileage:"12000 km",
+image:"https://images.unsplash.com/photo-1555215695-3004980ad54e",
+detail:"Full spec sport performance"
+},
+{
+name:"Mercedes C200 AMG",
+price:"198000",
+brand:"Mercedes",
+year:"2023",
+mileage:"25000 km",
+image:"https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8",
+detail:"Luxury AMG line interior"
+},
+{
+name:"Toyota Vellfire",
+price:"165000",
+brand:"Toyota",
+year:"2022",
+mileage:"40000 km",
+image:"https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6",
+detail:"Family MPV premium comfort"
+}
+];
+
+function setBrand(b){
+currentBrand=b;
+renderCars();
+}
+
+function setYear(y){
+currentYear=y;
+renderCars();
+}
+
+function renderCars(){
+
+let list=document.getElementById("list");
+let keyword=(document.getElementById("search").value||"").toLowerCase();
+
+list.innerHTML="";
+
+allCars.forEach(c=>{
+
+let brandMatch=(currentBrand==="all" || c.brand===currentBrand);
+let yearMatch=(currentYear==="all" || c.year===currentYear);
+let searchMatch=(c.name||"").toLowerCase().includes(keyword);
+
+if(brandMatch && yearMatch && searchMatch){
+
+list.innerHTML += `
+<div class="card">
+
+<img src="${c.image}">
+
+<h2>RM ${c.price}</h2>
+<h3>${c.name}</h3>
+
+<p>🏷 Brand: ${c.brand}</p>
+<p>📅 Tahun: ${c.year}</p>
+<p>📊 Mileage: ${c.mileage}</p>
+<p>📝 Detail: ${c.detail}</p>
+
+<button class="loan-btn" onclick="applyLoan('${c.name}','${c.price}')">
+📲 APPLY LOAN
+</button>
+
+</div>
+`;
+}
+
+});
+
+}
+
+function applyLoan(model,price){
+
+let name=prompt("Nama anda:");
+if(!name)return;
+
+let salary=prompt("Gaji bulanan:");
+if(!salary)return;
+
+let msg=`
+🚗 APPLY LOAN REQUEST
+
+Model: ${model}
+Harga: RM${price}
+
+👤 Nama: ${name}
+💼 Gaji: RM${salary}
+
+📌 Mohon semak kelayakan loan
+`;
+
+window.location="https://wa.me/"+phone+"?text="+encodeURIComponent(msg);
+}
+
+renderCars();
+
+</script>
+
+</body>
+</html>
