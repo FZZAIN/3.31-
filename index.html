@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FZZAIN RECOND CAR</title>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Arial;
+background:#0b0b0b;
+color:white;
+}
+
+.container{
+max-width:850px;
+margin:auto;
+padding:12px;
+}
+
+h2{
+text-align:center;
+font-size:24px;
+margin:10px 0 15px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:6px 0;
+border:none;
+border-radius:8px;
+font-size:14px;
+background:#1a1a1a;
+color:white;
+}
+
+h4{
+margin:10px 0 5px;
+font-size:14px;
+}
+
+.btn-group{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:6px;
+margin-bottom:10px;
+}
+
+.btn-group button{
+padding:9px;
+border:none;
+border-radius:6px;
+background:#333;
+color:white;
+cursor:pointer;
+font-size:12px;
+}
+
+.btn-group button:hover{
+background:#25d366;
+}
+
+.card{
+background:#1a1a1a;
+padding:12px;
+margin:10px 0;
+border-radius:12px;
+}
+
+/* ===== IMAGE SLIDER ===== */
+.slider{
+position:relative;
+width:100%;
+overflow:hidden;
+border-radius:10px;
+touch-action:pan-y;
+margin-bottom:10px;
+}
+
+.slider-track{
+display:flex;
+transition:transform .4s ease;
+will-change:transform;
+}
+
+.slider-track img{
+width:100%;
+flex-shrink:0;
+border-radius:10px;
+user-select:none;
+pointer-events:none;
+}
+
+.slider-btn{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+background:rgba(0,0,0,.55);
+border:none;
+color:white;
+padding:8px 10px;
+border-radius:6px;
+cursor:pointer;
+z-index:2;
+}
+
+.prev{left:6px;}
+.next{right:6px;}
+
+.dots{
+text-align:center;
+margin-bottom:8px;
+}
+
+.dot{
+width:7px;
+height:7px;
+border-radius:50%;
+display:inline-block;
+margin:0 3px;
+background:#555;
+cursor:pointer;
+}
+
+.dot.active{
+background:#25d366;
+}
+
+.card h2{
+font-size:22px;
+color:#25d366;
+margin:4px 0;
+text-align:left;
+}
+
+.card h3{
+font-size:17px;
+margin:4px 0;
+}
+
+.card p{
+margin:4px 0;
+font-size:13px;
+color:#ddd;
+}
+
+.loan-btn{
+width:100%;
+padding:11px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:#25d366;
+color:white;
+font-weight:bold;
+font-size:14px;
+cursor:pointer;
+}
+
+.loan-btn:hover{
+background:#1fa855;
+}
+
+.small{
+font-size:12px;
+color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🚗 FZZAIN RECOND CAR</h2>
+
+<input id="search" placeholder="🔍 Cari kereta..." onkeyup="renderCars()">
+
+<h4>💰 Harga (RM 50k - 500k)</h4>
+
+<input type="range" id="minPrice" min="50" max="500" value="50" oninput="updatePrice()">
+<input type="range" id="maxPrice" min="50" max="500" value="500" oninput="updatePrice()">
+
+<p class="small">
+Min: RM <span id="minVal">50</span>k | Max: RM <span id="maxVal">500</span>k
+</p>
+
+<h4>🏷 Brand</h4>
+<input id="brandSearch" placeholder="🔍 Cari brand sendiri" onkeyup="renderCars()">
+
+<div class="btn-group">
+<button onclick="setBrand('all')">ALL</button>
+<button onclick="setBrand('MERCEDES')">Mercedes</button>
+<button onclick="setBrand('BMW')">BMW</button>
+<button onclick="setBrand('TOYOTA')">Toyota</button>
+<button onclick="setBrand('HONDA')">Honda</button>
+<button onclick="setBrand('NISSAN')">Nissan</button>
+<button onclick="setBrand('MAZDA')">Mazda</button>
+<button onclick="setBrand('PORSCHE')">Porsche</button>
+<button onclick="setBrand('VOLKSWAGEN')">VW</button>
+</div>
+
+<h4>📅 Tahun</h4>
+<input id="yearSearch" placeholder="🔍 Cari tahun" onkeyup="renderCars()">
+
+<div class="btn-group">
+<button onclick="setYear('all')">ALL</button>
+<button onclick="setYear('2026')">2026</button>
+<button onclick="setYear('2025')">2025</button>
+<button onclick="setYear('2024')">2024</button>
+<button onclick="setYear('2023')">2023</button>
+<button onclick="setYear('2022')">2022</button>
+<button onclick="setYear('2021')">2021</button>
+<button onclick="setYear('2020')">2020</button>
+</div>
+
+<h4>🎨 Colour</h4>
+<input id="colorSearch" placeholder="🔍 Cari colour" onkeyup="renderCars()">
+
+<div class="btn-group">
+<button onclick="setColour('all')">ALL</button>
+<button onclick="setColour('BLACK')">BLACK</button>
+<button onclick="setColour('WHITE')">WHITE</button>
+<button onclick="setColour('SILVER')">SILVER</button>
+<button onclick="setColour('RED')">RED</button>
+<button onclick="setColour('BLUE')">BLUE</button>
+</div>
+
+<div id="list"></div>
+
+</div>
+
+<script>
+
+let phone="601136756741";
+
+let currentBrand="all";
+let currentYear="all";
+let currentColour="all";
+
+let minPrice=50;
+let maxPrice=500;
+
+let sliderState={};
+let autoTimers={};
+
+function setBrand(b){currentBrand=b;renderCars();}
+function setYear(y){currentYear=y;renderCars();}
+function setColour(c){currentColour=c;renderCars();}
+
+function updatePrice(){
+
+let min=+document.getElementById("minPrice").value;
+let max=+document.getElementById("maxPrice").value;
+
+if(min>max){
+[min,max]=[max,min];
+document.getElementById("minPrice").value=min;
+document.getElementById("maxPrice").value=max;
+}
+
+minPrice=min;
+maxPrice=max;
+
+document.getElementById("minVal").innerText=min;
+document.getElementById("maxVal").innerText=max;
+
+renderCars();
+}
+
+function priceNum(p){
+return parseInt(p.replace(/,/g,''));
+}
+
+function getId(name){
+return name.replace(/\s/g,'').replace(/[^\w]/g,'');
+}
+
+/* ===== DATA (UPDATED 5 IMAGES) ===== */
+let allCars=[
+{
+name:"MERCEDES BENZ A180 STYLE AMG LINE",
+price:"136,000",
+brand:"MERCEDES",
+year:"2020",
+colour:"SILVER",
+mileage:"18,950 KM",
+
+images:[
+"https://img.sanishtech.com/u/bfaa8df0875b68cf7e0c42a812d88c3b.jpeg",
+"https://img.sanishtech.com/u/7791a8ace0a5b708a5f320ef068c6359.jpeg",
+"https://img.sanishtech.com/u/6522d473b0d7825388588f0e042966fa.jpeg",
+"https://img.sanishtech.com/u/2a6c27e0fa7a9267afc59af15cbba6dc.jpeg",
+"https://img.sanishtech.com/u/9564102a866bef55000abccadf1f5bfc.jpeg"
+],
+
+detail:"HALF LEATHER, NAVI, BACK CAMERA"
+},
+{
+name:"VOLKSWAGEN GOLF MK8R 2.0",
+price:"230,000",
+brand:"VOLKSWAGEN",
+year:"2023",
+colour:"BLACK",
+mileage:"8,300 KM",
+
+images:[
+"https://img.sanishtech.com/u/7ea2aec99a71b30752955f61516ae72e.jpeg",
+"https://img.sanishtech.com/u/6fe2b4bcf10d27e036370dc31d62cf1b.jpeg",
+"https://img.sanishtech.com/u/7017e76f09a8a4a1e82fd42802303b68.jpeg",
+"https://img.sanishtech.com/u/93c22ac796993fe6213e1ef70119e674.jpeg",
+"https://img.sanishtech.com/u/aca6eae21c2c5bda23c919510e0329ad.jpeg"
+],
+
+detail:"ORIGINAL NAVI, TV, BACK CAMERA"
+},
+{
+name:"HONDA ODYSSEY ABSOLUTE SENSING",
+price:"155,000",
+brand:"HONDA",
+year:"2021",
+colour:"WHITE",
+mileage:"49,475 KM",
+
+images:[
+"https://img.sanishtech.com/u/cc5f964d4499f19db8763156aa92dc11.jpeg",
+"https://img.sanishtech.com/u/68b50ffa4c8c259cb45e09ff78dfd41a.jpeg",
+"https://img.sanishtech.com/u/7b784a969d49a359644c8022a4119a1d.jpeg",
+"https://img.sanishtech.com/u/471ef462bfa74eb67de3d57a2f1bd6e0.jpeg",
+"https://img.sanishtech.com/u/2353b84ce8ba26b6aad8bbc3e7545aca.jpeg"
+],
+
+detail:"8 SEATER, FLIP DOWN MONITOR, POWER DOOR"
+}
+];
+
+/* ===== SLIDER ===== */
+
+function moveSlide(name,dir){
+
+let id=getId(name);
+
+if(sliderState[id]===undefined) sliderState[id]=0;
+
+let total=document.querySelectorAll("#slider-"+id+" img").length;
+
+sliderState[id]+=dir;
+
+if(sliderState[id]<0) sliderState[id]=total-1;
+if(sliderState[id]>=total) sliderState[id]=0;
+
+updateSlider(id);
+}
+
+function goSlide(name,index){
+let id=getId(name);
+sliderState[id]=index;
+updateSlider(id);
+}
+
+function updateSlider(id){
+
+let track=document.querySelector("#slider-"+id+" .slider-track");
+if(!track)return;
+
+let index=sliderState[id] || 0;
+
+track.style.transform=`translateX(-${index*100}%)`;
+
+document.querySelectorAll("#dots-"+id+" .dot").forEach((dot,i)=>{
+dot.classList.toggle("active",i===index);
+});
+}
+
+/* ===== AUTO SLIDE SETIAP CARD ===== */
+
+function startAuto(id){
+
+if(autoTimers[id]) clearInterval(autoTimers[id]);
+
+autoTimers[id]=setInterval(()=>{
+moveSlide(id,1);
+},4000);
+}
+
+/* ===== TOUCH INDIVIDUAL ===== */
+
+function attachSwipe(id){
+
+let slider=document.getElementById("slider-"+id);
+if(!slider)return;
+
+let startX=0;
+let endX=0;
+
+slider.addEventListener("touchstart",(e)=>{
+startX=e.touches[0].clientX;
+},{passive:true});
+
+slider.addEventListener("touchend",(e)=>{
+endX=e.changedTouches[0].clientX;
+
+let diff=startX-endX;
+
+if(Math.abs(diff)>50){
+if(diff>0) moveSlide(id,1);
+else moveSlide(id,-1);
+}
+},{passive:true});
+}
+
+/* ===== RENDER ===== */
+
+function renderCars(){
+
+let list=document.getElementById("list");
+
+let search=document.getElementById("search").value.toLowerCase();
+let brandSearch=document.getElementById("brandSearch").value.toLowerCase();
+let yearSearch=document.getElementById("yearSearch").value.toLowerCase();
+let colorSearch=document.getElementById("colorSearch").value.toLowerCase();
+
+list.innerHTML="";
+
+allCars.forEach(c=>{
+
+let price=priceNum(c.price);
+
+let brandMatch=(currentBrand==="all"||c.brand===currentBrand)&&c.brand.toLowerCase().includes(brandSearch);
+let yearMatch=(currentYear==="all"||c.year===currentYear)&&c.year.toLowerCase().includes(yearSearch);
+let colourMatch=(currentColour==="all"||c.colour===currentColour)&&c.colour.toLowerCase().includes(colorSearch);
+let searchMatch=c.name.toLowerCase().includes(search);
+let priceMatch=price>=minPrice*1000 && price<=maxPrice*1000;
+
+if(brandMatch&&yearMatch&&colourMatch&&searchMatch&&priceMatch){
+
+let id=getId(c.name);
+
+list.innerHTML+=`
+<div class="card">
+
+<div class="slider" id="slider-${id}">
+<div class="slider-track">
+${c.images.map(img=>`<img src="${img}">`).join('')}
+</div>
+
+<button class="slider-btn prev" onclick="moveSlide('${c.name}',-1)">❮</button>
+<button class="slider-btn next" onclick="moveSlide('${c.name}',1)">❯</button>
+</div>
+
+<div class="dots" id="dots-${id}">
+${c.images.map((x,i)=>`
+<span class="dot ${i===0?'active':''}" onclick="goSlide('${c.name}',${i})"></span>
+`).join('')}
+</div>
+
+<h2>RM ${c.price}</h2>
+<h3>${c.name}</h3>
+<p>🏷 Brand: ${c.brand}</p>
+<p>📅 Tahun: ${c.year}</p>
+<p>🎨 Colour: ${c.colour}</p>
+<p>📊 Mileage: ${c.mileage}</p>
+<p>📝 Detail: ${c.detail}</p>
+
+<button class="loan-btn" onclick="applyLoan('${c.name}','${c.price}')">
+📲 APPLY LOAN
+</button>
+
+</div>
+`;
+
+setTimeout(()=>{
+attachSwipe(id);
+startAuto(id);
+updateSlider(id);
+},50);
+
+}
+
+});
+
+}
+
+function applyLoan(model,price){
+
+let name=prompt("Nama anda:");
+if(!name)return;
+
+let salary=prompt("Gaji bulanan:");
+if(!salary)return;
+
+let msg=`
+🚗 APPLY LOAN REQUEST
+
+Model: ${model}
+Harga: RM${price}
+
+👤 Nama: ${name}
+💼 Gaji: ${salary}
+
+📌 Sila semak kelayakan loan & monthly installment`;
+
+window.location="https://wa.me/"+phone+"?text="+encodeURIComponent(msg);
+}
+
+renderCars();
+
+</script>
+
+</body>
+</html>
