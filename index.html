@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FZZAIN RECOND CAR</title>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Arial;
+background:#0b0b0b;
+color:white;
+}
+
+.container{
+max-width:850px;
+margin:auto;
+padding:12px;
+}
+
+h2{
+text-align:center;
+font-size:24px;
+margin:10px 0 15px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:6px 0;
+border:none;
+border-radius:8px;
+font-size:14px;
+background:#1a1a1a;
+color:white;
+}
+
+h4{
+margin:10px 0 5px;
+font-size:14px;
+}
+
+.btn-group{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:6px;
+margin-bottom:10px;
+}
+
+.btn-group button{
+padding:9px;
+border:none;
+border-radius:6px;
+background:#333;
+color:white;
+cursor:pointer;
+font-size:12px;
+}
+
+.btn-group button:hover{
+background:#25d366;
+}
+
+.card{
+background:#1a1a1a;
+padding:12px;
+margin:10px 0;
+border-radius:12px;
+}
+
+/* ===== IMAGE SLIDER ===== */
+.slider{
+position:relative;
+width:100%;
+overflow:hidden;
+border-radius:10px;
+touch-action:pan-y;
+margin-bottom:10px;
+}
+
+.slider-track{
+display:flex;
+transition:transform .4s ease;
+will-change:transform;
+}
+
+.slider-track img{
+width:100%;
+flex-shrink:0;
+border-radius:10px;
+user-select:none;
+pointer-events:none;
+}
+
+.slider-btn{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+background:rgba(0,0,0,.55);
+border:none;
+color:white;
+padding:8px 10px;
+border-radius:6px;
+cursor:pointer;
+z-index:2;
+}
+
+.prev{left:6px;}
+.next{right:6px;}
+
+.dots{
+text-align:center;
+margin-bottom:8px;
+}
+
+.dot{
+width:7px;
+height:7px;
+border-radius:50%;
+display:inline-block;
+margin:0 3px;
+background:#555;
+cursor:pointer;
+}
+
+.dot.active{
+background:#25d366;
+}
+
+.card h2{
+font-size:22px;
+color:#25d366;
+margin:4px 0;
+text-align:left;
+}
+
+.card h3{
+font-size:17px;
+margin:4px 0;
+}
+
+.card p{
+margin:4px 0;
+font-size:13px;
+color:#ddd;
+}
+
+.loan-btn{
+width:100%;
+padding:11px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:#25d366;
+color:white;
+font-weight:bold;
+font-size:14px;
+cursor:pointer;
+}
+
+.loan-btn:hover{
+background:#1fa855;
+}
+
+.small{
+font-size:12px;
+color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🚗 FZZAIN RECOND CAR</h2>
+
+<input id="search" placeholder="🔍 Cari kereta..." onkeyup="renderCars()">
+
+<h4>💰 Harga (RM 50k - 500k)</h4>
+
+<input type="range" id="minPrice" min="50" max="500" value="50" oninput="updatePrice()">
+<input type="range" id="maxPrice" min="50" max="500" value="500" oninput="updatePrice()">
+
+<p class="small">
+Min: RM <span id="minVal">50</span>k | Max: RM <span id="maxVal">500</span>k
+</p>
+
+<h4>🏷 Brand</h4>
+<input id="brandSearch" placeholder="🔍 Cari brand sendiri" onkeyup="renderCars()">
+
+<div class="btn-group">
+<button onclick="setBrand('all')">ALL</button>
+<button onclick="setBrand('MERCEDES')">Mercedes</button>
+<button onclick="setBrand('BMW')">BMW</button>
+<button onclick="setBrand('TOYOTA')">Toyota</button>
+<button onclick="setBrand('HONDA')">Honda</button>
+<button onclick="setBrand('NISSAN')">Nissan</button>
+<button onclick="setBrand('MAZDA')">Mazda</button>
+<button onclick="setBrand('PORSCHE')">Porsche</button>
+<button onclick="setBrand('VOLKSWAGEN')">VW</button>
+</div>
+
+<h4>📅 Tahun</h4>
+<input id="yearSearch" placeholder="🔍 Cari tahun" onkeyup="renderCars()">
+
+<div class="btn-group">
+<button onclick="setYear('all')">ALL</button>
+<button onclick="setYear('2026')">2026</button>
+<button onclick="setYear('2025')">2025</button>
+<button onclick="setYear('2024')">2024</button>
+<button onclick="setYear('2023')">2023</button>
+<button onclick="setYear('2022')">2022</button>
+<button onclick="setYear('2021')">2021</button>
+<button onclick="setYear('2020')">2020</button>
+</div>
+
+<h4>🎨 Colour</h4>
+<input id="colorSearch" placeholder="🔍 Cari colour" onkeyup="renderCars()">
+
+<div class="btn-group">
+<button onclick="setColour('all')">ALL</button>
+<button onclick="setColour('BLACK')">BLACK</button>
+<button onclick="setColour('WHITE')">WHITE</button>
+<button onclick="setColour('SILVER')">SILVER</button>
+<button onclick="setColour('RED')">RED</button>
+<button onclick="setColour('BLUE')">BLUE</button>
+</div>
+
+<div id="list"></div>
+
+</div>
+
+<script>
+
+let phone="601136756741";
+
+let currentBrand="all";
+let currentYear="all";
+let currentColour="all";
+
+let minPrice=50;
+let maxPrice=500;
+
+let sliderState={};
+let autoTimers={};
+
+function setBrand(b){currentBrand=b;renderCars();}
+function setYear(y){currentYear=y;renderCars();}
+function setColour(c){currentColour=c;renderCars();}
+
+function updatePrice(){
+
+let min=+document.getElementById("minPrice").value;
+let max=+document.getElementById("maxPrice").value;
+
+if(min>max){
+[min,max]=[max,min];
+document.getElementById("minPrice").value=min;
+document.getElementById("maxPrice").value=max;
+}
+
+minPrice=min;
+maxPrice=max;
+
+document.getElementById("minVal").innerText=min;
+document.getElementById("maxVal").innerText=max;
+
+renderCars();
+}
+
+function priceNum(p){
+return parseInt(p.replace(/,/g,''));
+}
+
+function getId(name){
+return name.replace(/\s/g,'').replace(/[^\w]/g,'');
+}
+
+/* ===== DATA (UPDATED 5 IMAGES) ===== */
+let allCars=[
+{
+name:"MERCEDES BENZ A180 STYLE AMG LINE",
+price:"136,000",
+brand:"MERCEDES",
+year:"2020",
+colour:"SILVER",
+mileage:"18,950 KM",
+
+images:[
+"https://img.sanishtech.com/u/bfaa8df0875b68cf7e0c42a812d88c3b.jpeg",
+"https://img.sanishtech.com/u/7791a8ace0a5b708a5f320ef068c6359.jpeg",
+"https://img.sanishtech.com/u/6522d473b0d7825388588f0e042966fa.jpeg",
+"https://img.sanishtech.com/u/2a6c27e0fa7a9267afc59af15cbba6dc.jpeg",
+"https://img.sanishtech.com/u/9564102a866bef55000abccadf1f5bfc.jpeg"
+],
+
+detail:"HALF LEATHER, NAVI, BACK CAMERA"
+},
+{
+name:"VOLKSWAGEN GOLF MK8R 2.0",
+price:"230,000",
+brand:"VOLKSWAGEN",
+year:"2023",
+colour:"BLACK",
+mileage:"8,300 KM",
+
+images:[
+"https://img.sanishtech.com/u/7ea2aec99a71b30752955f61516ae72e.jpeg",
+"https://img.sanishtech.com/u/6fe2b4bcf10d27e036370dc31d62cf1b.jpeg",
+"https://img.sanishtech.com/u/7017e76f09a8a4a1e82fd42802303b68.jpeg",
+"https://img.sanishtech.com/u/93c22ac796993fe6213e1ef70119e674.jpeg",
+"https://img.sanishtech.com/u/aca6eae21c2c5bda23c919510e0329ad.jpeg"
+],
+
+detail:"ORIGINAL NAVI, TV, BACK CAMERA"
+},
+{
+name:"HONDA ODYSSEY ABSOLUTE SENSING",
+price:"155,000",
+brand:"HONDA",
+year:"2021",
+colour:"WHITE",
+mileage:"49,475 KM",
+
+images:[
+"https://img.sanishtech.com/u/cc5f964d4499f19db8763156aa92dc11.jpeg",
+"https://img.sanishtech.com/u/68b50ffa4c8c259cb45e09ff78dfd41a.jpeg",
+"https://img.sanishtech.com/u/7b784a969d49a359644c8022a4119a1d.jpeg",
+"https://img.sanishtech.com/u/471ef462bfa74eb67de3d57a2f1bd6e0.jpeg",
+"https://img.sanishtech.com/u/2353b84ce8ba26b6aad8bbc3e7545aca.jpeg"
+],
+
+detail:"8 SEATER, FLIP DOWN MONITOR, POWER DOOR"
+},
+{
+name:"TOYOTA HARRIER 14303",
+price:"146,000",
+brand:"TOYOTA",
+year:"2020",
+colour:"BLACK",
+mileage:"53,334 KM",
+
+images:[
+"https://img.sanishtech.com/u/80a6a0471995f2a9cf1747e0fe6dc4b7.jpeg",
+"https://img.sanishtech.com/u/dc582dec14070bafac0a9632b1e58f52.jpeg",
+"https://img.sanishtech.com/u/2398ee55e4e052af6cc86de5965b3041.jpeg",
+"https://img.sanishtech.com/u/1418199f2fcb256a98b16710d6e82d4e.jpeg",
+"https://img.sanishtech.com/u/f38df5c916c191d03e48a147d2c8193f.jpeg"
+],
+
+detail:"4B, JBL , 4 CAMERAS, POWER BOOT, DIM, BSM, HUD,(MOP)NAVI TV, HALF LEATHER"
+},
+{
+name:"TOYOTA HARRIER Z LEATHER PACKAGE 44019",
+price:"156,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"PEARL",
+mileage:"48,786 KM",
+
+images:[
+"https://img.sanishtech.com/u/d859506dfdf63141a4ff0bdac407eddd.jpeg",
+"https://img.sanishtech.com/u/9d80495708ea8bdc782fdefbf92b4f5c.jpeg",
+"https://img.sanishtech.com/u/595ca24fbb2aae19729e575876cf8e08.jpeg",
+"https://img.sanishtech.com/u/3e8551df79e2161a6e8ebd8992e5e351.jpeg",
+"https://img.sanishtech.com/u/c24dcabc6e9f5e8d387c70cd1ae804aa.jpeg"
+],
+
+detail:"4.5B, LEATHER, MOP NAVI. TV, JBL, 4 CAMERAS, POWER BOOT, DIGITAL INNER MIRROR, BSM, HUD, MODELLISTA FULL AERO"
+},
+{
+name:"TOYOTA HARRIER Z LEATHER PACKAGE 57708",
+price:"156,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"BLACK",
+mileage:"16,398 KM",
+
+images:[
+"https://img.sanishtech.com/u/afd08af4b40f8986a8a1fb2d1cc3103c.jpeg",
+"https://img.sanishtech.com/u/7bd2fec8dd8fca5b8f0d34e5898c580b.jpeg",
+"https://img.sanishtech.com/u/9de11288a376d0e0e40131b3a192f971.jpeg",
+"https://img.sanishtech.com/u/8e180fc887b4d343aba84bd979bc4c3a.jpeg",
+"https://img.sanishtech.com/u/57410ad54a3c57d0df77e410561510ca.jpeg"
+],
+
+detail:"5A, LEATHER ,MOP NAVI. TV ,JBL ,4 CAMERAS ,POWER BOOT , DIGITAL INNER MIRROR ,BSM ,HUD"
+},
+{
+name:"TOYOTA HARRIER G 33711",
+price:"136,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"BLACK",
+mileage:"36,820 KM",
+
+images:[
+"https://img.sanishtech.com/u/4128e3f39daa35b660df83f13989f86c.jpeg",
+"https://img.sanishtech.com/u/3d43c67bf82e38aa4103ed1afbbcbe55.jpeg",
+"https://img.sanishtech.com/u/1d2302370466777aea93c28069a8e815.jpeg",
+"https://img.sanishtech.com/u/87fba99fa8d26f80629ef73b8595a969.jpeg",
+"https://img.sanishtech.com/u/75f2d357f122365ea9c1f0e290471689.jpeg"
+],
+
+detail:"4.5B ,HALF LEATHER ,DISPLAY AUDIO BACK CAMERA ,POWER BOOT ,DIGITAL INNER MIRROR ,BSM"
+},
+{
+name:"TOYOTA GR COROLLA RZ 4WD 01308",
+price:"230,000",
+brand:"TOYOTA",
+year:"2023",
+colour:"GREY",
+mileage:"167 KM",
+
+images:[
+"https://img.sanishtech.com/u/4cbe1b23b305b160b417f38622d6ef84.jpeg",
+"https://img.sanishtech.com/u/b21e1b1438947c01ae92b758eaae1ad6.jpeg",
+"https://img.sanishtech.com/u/14016bf378773deb950addeb8b3cfd78.jpeg",
+"https://img.sanishtech.com/u/019e7e23ea9993a7ad26489c8a93aea8.jpeg",
+"https://img.sanishtech.com/u/c6d0b713eb63e11a7242ac09c37f765a.jpeg"
+],
+
+detail:"6A, HALF-LEATHER, MOP NAVI. TV, JBL, BACK CAMERA, BSM, HUD"
+},
+{
+name:"AUDI A5 SPORTBACK 45 TFSI SPORT QUATTRO S LINE PACKAGE 68224",
+price:"165,000",
+brand:"AUDI",
+year:"2020",
+colour:"PEARL",
+mileage:"50,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/6346d2b798aedc0d116b36ea060a9726.jpeg",
+"https://img.sanishtech.com/u/010d4f6813cffb1eff0cda9e9739d282.jpeg",
+"https://img.sanishtech.com/u/4f59a88888f358a0cb507ccdf445c96a.jpeg",
+"https://img.sanishtech.com/u/6568f8023b0b21ddf96e4e9e01b19784.jpeg",
+"https://img.sanishtech.com/u/120964902a3bc250cccfe7ef1c34f288.jpeg"
+],
+
+detail:"4.5B, NAVI, BLIND SPORT MONITOR, BLACK LEATHER"
+},
+{
+name:"AUDI A7 SPORTBACK 55 TFSI QUATTRO S LINE 4WD 26900",
+price:"270,000",
+brand:"AUDI",
+year:"2019",
+colour:"BLACK",
+mileage:"52,808 KM",
+
+images:[
+"https://img.sanishtech.com/u/e95d2d19ec082534061111f03f572949.jpeg",
+"https://img.sanishtech.com/u/355a86b6bd1f28e7beab0e67e8cf1e06.jpeg",
+"https://img.sanishtech.com/u/22199e65cf301f0945c1bcbd7991f28b.jpeg",
+"https://img.sanishtech.com/u/d7b1cec47a58dc68b9b9d16f849d4af3.jpeg",
+"https://img.sanishtech.com/u/ca25006367c4183967fe4a48736c5e30.jpeg"
+],
+
+detail:"4.5C LEATHER, ORIGINAL NAVI. TV, 360 CAMERAS"
+},
+{
+name:"AUDI Q5 45TFSI QUATTRO SPORT 4WD 85322",
+price:"163,000",
+brand:"AUDI",
+year:"2019",
+colour:"BLUE",
+mileage:"37,973 KM",
+
+images:[
+"https://img.sanishtech.com/u/2861df5c74af08b4a553dc947a789f31.jpeg",
+"https://img.sanishtech.com/u/10dbae9bfe349c602d9010a464ef1dff.jpeg",
+"https://img.sanishtech.com/u/891ff531a02905c7a8abc7d500923b44.jpeg",
+"https://img.sanishtech.com/u/e2c22a2e2d31b90fa16640c66e3dd179.jpeg",
+"https://img.sanishtech.com/u/4791598d79fa9a42866666e77bdbb525.jpeg"
+],
+
+detail:"5.0B, WHITE LEATHER SEAT , ORIGINAL NAVI. TV, 4 CAMERA, POWER BOOT"
+},
+{
+name:"VOLKSWAGEN GOLF GTI BASE GRADE 84876",
+price:"165,000",
+brand:"VOLKSWAGEN",
+year:"2022",
+colour:"WHITE",
+mileage:"19,440 KM",
+
+images:[
+"https://img.sanishtech.com/u/71b49f0fe30a78bc6ed41a87eb26f2d2.jpeg",
+"https://img.sanishtech.com/u/8df2a5777713c55f116112ebe06ad708.jpeg",
+"https://img.sanishtech.com/u/4306589b941eb001a21bdc3b599f8f58.jpeg",
+"https://img.sanishtech.com/u/fdef65cf0e7d1d146833aeccd4a565d0.jpeg",
+"https://img.sanishtech.com/u/bdafafe892df5a0814e76e8bdd1b22d0.jpeg"
+],
+
+detail:"4.5B, ORIGINAL NAVI, BACK CAMERA"
+},
+{
+name:"VOLKSWAGEN GOLF MK8R 2.0 14746",
+price:"255,000",
+brand:"VOLKSWAGEN",
+year:"2023",
+colour:"WHITE",
+mileage:"37,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/40b983125ca7431cdd058678abb0fba4.jpeg",
+"https://img.sanishtech.com/u/515b0d45b4f84bb0a4e87b3f2445119a.jpeg",
+"https://img.sanishtech.com/u/4889c357c2fdfaa4e04207cf0849722c.jpeg",
+"https://img.sanishtech.com/u/56ea97d3d53b224f31e77974566527d4.jpeg",
+"https://img.sanishtech.com/u/ffbe7175f87979e6e320c48226cfade6.jpeg"
+],
+
+detail:"4.5B, NAVI, BACK CAMERA, FLOW DESIGN AERO, MILTEK EXHAUST TIPS, EVENTURI INTAKE"
+},
+{
+name:"MERCEDES BENZ A35 AMG PREMIUM PLUS 4MATIC UK SPEC 65872",
+price:"230,000",
+brand:"MERCEDES",
+year:"2022",
+colour:"MOUNTAIN GREY METALIC (WRAP YELLOR)",
+mileage:"17,600 KM",
+
+images:[
+"https://img.sanishtech.com/u/346b34cb5477ad39cc8e9738884f4544.jpeg",
+"https://img.sanishtech.com/u/92fa0ac6350512a6fb007285aa6eb16d.jpeg",
+"https://img.sanishtech.com/u/cc32f72b291b343251655057c7d3e573.jpeg",
+"https://img.sanishtech.com/u/5e696f0f7153361832e660fc889df9dd.jpeg",
+"https://img.sanishtech.com/u/8c76e256b5948e2d03e6d64702a85065.jpeg"
+],
+
+detail:"PANORAMIC GLASS ROOF, BLACK LEATHER, MEMORY SEATS, REVERSE CAMERA, KEY-LESS GO, AERO KIT"
+},
+{
+name:"MERCEDES BENZ A45 S 4MATIC+ 4WD 42444",
+price:"249,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"PEARL",
+mileage:"22,178 KM",
+
+images:[
+"https://img.sanishtech.com/u/d8f1a6a200ecd62f6c9a74c3ffb1d486.jpeg",
+"https://img.sanishtech.com/u/90f2ca03c5f6c8e83167ee8cc85df360.jpeg",
+"https://img.sanishtech.com/u/90b02517bbeb5481e55b4ccabb92cfec.jpeg",
+"https://img.sanishtech.com/u/22fbbfe1e659d14c9d683120c918b733.jpeg",
+"https://img.sanishtech.com/u/c7eaa7d71d2df69eb147a426da74ccde.jpeg"
+],
+
+detail:"4.5B, ORIGINAL NAVI. TV, BACK CAMERA, RADAR SAFETY PACKAGE"
+},
+{
+name:"MERCEDES BENZ A180 STYLE SEDAN AMG LINE 45797",
+price:"145,000",
+brand:"MERCEDES",
+year:"2020",
+colour:"WHITE",
+mileage:"39,028 KM",
+
+images:[
+"https://img.sanishtech.com/u/d2065c2b9903a2d91a892c05fc08b05d.jpeg",
+"https://img.sanishtech.com/u/959304f53f810f5a5199c74a44aeb1d8.jpeg",
+"https://img.sanishtech.com/u/7f7e353993a82a63793a8f349976a756.jpeg",
+"https://img.sanishtech.com/u/10e5304d643e07cceb614ef495fa00f4.jpeg",
+"https://img.sanishtech.com/u/db1c7d9c0572bf2d85576634ae06fc95.jpeg"
+],
+
+detail:"4.5B ,PANORAMIC ROOF, ORIGINAL NAVI ,RADAR SAFETY PACKAGE, ,NAVIGATION PACKAGE"
+},
+{
+name:"MERCEDES BENZ A180 SEDAN AMG LINE 04689",
+price:"151,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"BLACK",
+mileage:"24,050 KM",
+
+images:[
+"https://img.sanishtech.com/u/d7338f72152060b6b87a7be1e238c4a1.jpeg",
+"https://img.sanishtech.com/u/3d27554148cd392e769c831a649ca83f.jpeg",
+"https://img.sanishtech.com/u/fcd5fac1522fdda7caeb94134600eede.jpeg",
+"https://img.sanishtech.com/u/1bab2c7084306d57058921d0c097da0b.jpeg",
+"https://img.sanishtech.com/u/15b4315f8573b1bd40d9d5420ce7cf08.jpeg"
+],
+
+detail:"4.5B, ORIGINAL NAVI. TV, NAVIGATION PACKAGE"
+},
+{
+name:"MERCEDES BENZ A180 STYLE SEDAN AMG LINE 45959",
+price:"154,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"WHITE",
+mileage:"19,376 KM",
+
+images:[
+"https://img.sanishtech.com/u/23941bff92c484b2fa208558183bc33d.jpeg",
+"https://img.sanishtech.com/u/ee606138086f422e9b268a0537b0707b.jpeg",
+"https://img.sanishtech.com/u/d665b22b6238487d1c8747082bfe83dd.jpeg",
+"https://img.sanishtech.com/u/7efd34f97f4e2e9d49fd42ab4bad34ad.jpeg",
+"https://img.sanishtech.com/u/33dce4f4e78e2560eb87307539668c10.jpeg"
+],
+
+detail:"5A ,PANORAMIC SLIDING ROOF, HALF-LEATHER,ORIGINAL NAVI TV , BACK CAMERA ,RADAR SAFETY PACKAGE ,AMG STYLING PACKAGE"
+},
+{
+name:"MERCEDES BENZ A180 SEDAN AMG LINE 20109",
+price:"154,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"WHITE",
+mileage:"20,905 KM",
+
+images:[
+"https://img.sanishtech.com/u/f3bd1205a7c83fdbe362d3e9c209ebdc.jpeg",
+"https://img.sanishtech.com/u/1a10845a91eeac34946d5c24ae24c117.jpeg",
+"https://img.sanishtech.com/u/0bfa6d2fdc0c83b6b4d751de2cd0ce2f.jpeg",
+"https://img.sanishtech.com/u/2f52f23e39f026668ad50ba102b9117a.jpeg",
+"https://img.sanishtech.com/u/20b5bb7b4546b5bb9471ec8fad0d1764.jpeg"
+],
+
+detail:"4.5A ,PANORAMIC SLIDING ROOF,HALF-LEATHER ,ORIGINAL NAVI RADAR SAFETY PACKAGE ,NAVIGATION PACKAGE"
+},
+{
+name:"MERCEDES BENZ CLA180 AMG LINE 01781",
+price:"188,000",
+brand:"MERCEDES",
+year:"2022",
+colour:"WHITE",
+mileage:"8,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/9b75a301e6cee0fd3cd05241eae0084d.jpeg",
+"https://img.sanishtech.com/u/d5087e239e30ed493c2acdd0e1b466dd.jpeg",
+"https://img.sanishtech.com/u/b5fd85b4fc4d85f8af9740e68c10fc5a.jpeg",
+"https://img.sanishtech.com/u/477e094cb341e92e520058af5d1a060b.jpeg",
+"https://img.sanishtech.com/u/99a285f8072c0b0e516c740bb6e2fc5e.jpeg"
+],
+
+detail:"5A, HALF-LEATHER, ORIGINAL NAVI. TV, BACK CAMERA"
+},
+{
+name:"MERCEDES BENZ CLA180 AMG LINE 62504",
+price:"178,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"GREY",
+mileage:"17,699 KM",
+
+images:[
+"https://img.sanishtech.com/u/ce710dec45f1139de7c8f5fc19c04fbe.jpeg",
+"https://img.sanishtech.com/u/b6d94615a0066f9fc0c97a5181591c8c.jpeg",
+"https://img.sanishtech.com/u/de9072a50b7f4da3ee69d34baaafdbf2.jpeg",
+"https://img.sanishtech.com/u/2a0298cba4cc88092f319b7effab455e.jpeg",
+"https://img.sanishtech.com/u/f5a115bd5e9584e88c1d9b39a401a7fa.jpeg"
+],
+
+detail:"4.5A, HALF-LEATHER, ORIGINAL NAVI. TV, AMG STYLING PACKAGE"
+},
+{
+name:"MERCEDES BENZ CLA45 S 4MATIC PLUS 95201",
+price:"315,000",
+brand:"MERCEDES",
+year:"2022",
+colour:"WHITE",
+mileage:"38242 KM",
+
+images:[
+"https://img.sanishtech.com/u/b1ef3fdc4cc7bdc3d41c6cb21c375e25.jpeg",
+"https://img.sanishtech.com/u/a40347a70591010f3658104bf665f114.jpeg",
+"https://img.sanishtech.com/u/618da208eeb59f80e22832d806858e6c.jpeg",
+"https://img.sanishtech.com/u/78cfff2f803214cb64c1a981eaab4dd1.jpeg",
+"https://img.sanishtech.com/u/7550ee267ffd002f130f2dd0045bfaf1.jpeg"
+],
+
+detail:"4.5B, PANORAMIC SLIDING ROOF, ORIGINAL NAVI. TV, BURMESTER SOUND, BSM, HUD, AMG ADVANCED PACKAGE, AMG PERFORMANCE PACKAGE"
+},
+{
+name:"MERCEDES BENZ GLA35 4MATIC AMG 48989",
+price:"220,000",
+brand:"MERCEDES",
+year:"2022",
+colour:"PEARL",
+mileage:"46,610 KM",
+
+images:[
+"https://img.sanishtech.com/u/37612692e5a814fe9a93ff0541788290.jpeg",
+"https://img.sanishtech.com/u/317662a98b805cad1d96182c1987a08f.jpeg",
+"https://img.sanishtech.com/u/c371683fc3b95a822ed424bab6a6135b.jpeg",
+"https://img.sanishtech.com/u/6ced751f116559cb0cc4ed2bbd22a03a.jpeg",
+"https://img.sanishtech.com/u/9d2253534d63a4d41234d10af391cefb.jpeg"
+],
+
+detail:"4.5B, PANORAMIC SLIDING ROOF, ORIGINAL NAVI. TV, 360 CAMERA, POWER TRUNK, AMG PERFORMANCE PACKAGE, ADVANCED PACKAGE, RECARO SEATS"
+},
+{
+name:"HONDA CIVIC TYPE R FL5 05075",
+price:"258,000",
+brand:"HONDA",
+year:"2024",
+colour:"BLACK",
+mileage:"12,350 KM",
+
+images:[
+"https://img.sanishtech.com/u/6ca77ab4b485eecb8a7f1e73780e3647.jpeg",
+"https://img.sanishtech.com/u/c1c3d6d5675c1c5a9098b8c7f966e1a3.jpeg",
+"https://img.sanishtech.com/u/025bf879bd6e5dced3ada6c9e7dc736a.jpeg",
+"https://img.sanishtech.com/u/1498663be022784d1b75b3a925f408f9.jpeg",
+"https://img.sanishtech.com/u/f76aee121c86dcda523b2a04188356f1.jpeg"
+],
+
+detail:"5A, DOP NAVI. TV"
+},
+{
+name:"HONDA CIVIC HATCHBACK FL1 AT 03363",
+price:"140,000",
+brand:"HONDA",
+year:"2021",
+colour:"BLUE",
+mileage:"42,350 KM",
+
+images:[
+"https://img.sanishtech.com/u/684f75ace0a8deba41b5cf81b724ec1a.jpeg",
+"https://img.sanishtech.com/u/56c9772ffb85da0a7de3da2fe7f1fced.jpeg",
+"https://img.sanishtech.com/u/3ab534a5adf1fb2d5a9d95425a3ed817.jpeg",
+"https://img.sanishtech.com/u/88c02d11197b52b5cc9fd201906acfcb.jpeg",
+"https://img.sanishtech.com/u/f811c4b1499face566ebd69f281fc45b.jpeg"
+],
+
+detail:"4.5B, HALF-LEATHER, DOP NAVI. TV, HONDA SENSING"
+},
+{
+name:"HONDA NBOX CUSTOM TURBO HONDA SENSING 45748",
+price:"110,000",
+brand:"HONDA",
+year:"2024",
+colour:"BLACK",
+mileage:"8,200 KM",
+
+images:[
+"https://img.sanishtech.com/u/3aa880e5191f9db1cacf8445f617e667.jpeg",
+"https://img.sanishtech.com/u/8189595681931326886bc32050d64f73.jpeg",
+"https://img.sanishtech.com/u/c6fbe81bbee510d7fbb59364f8d502d1.jpeg",
+"https://img.sanishtech.com/u/0a66f4242abc54bc951b860b5f364ea9.jpeg",
+"https://img.sanishtech.com/u/d0510a63abaea0eab36feb7892f7d18a.jpeg"
+],
+
+detail:"4A ,NEW FACELIFT, MAKER NAVI TV, AROUND VIEW 4 CAMERA, REMOTE CONTROL ON STEERING, HALF LEATHER SEAT, 2 POWER DOOR, MAKER ALLOY WHEELS, HONDA SENSING, PRE-CRASH,LANE DEPARTURE ALERT, LED HEADLIGHT, FOG"
+},
+{
+name:"HONDA NBOX CUSTOM TURBO COORDINATE STYLE MONOTONE 40329",
+price:"110,000",
+brand:"HONDA",
+year:"2024",
+colour:"PEARL WHITE",
+mileage:"26,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/9a0850ea55690e6eb7580f8ba04bf664.jpeg",
+"https://img.sanishtech.com/u/21b40f8717085957bd697f1654afe8d9.jpeg",
+"https://img.sanishtech.com/u/ad54553a7cc241fd210b7a50d00a2d41.jpeg",
+"https://img.sanishtech.com/u/25072b5362069d1d0f9d160b6f90d760.jpeg",
+"https://img.sanishtech.com/u/8107b3ad6fd5d9f07f26b8c543a5bac5.jpeg"
+],
+
+detail:"4.5B ,NEW FACELIFT, MAKER NAVI TV, BACK CAMERA, REMOTE CONTROL ON STEERING, HALF LEATHER SEAT, 2 POWER DOOR, MAKER ALLOY WHEELS, HONDA SENSING, PRE-CRASH, LANE DEPARTURE ALERT, LED HEADLIGHT, FOG"
+},
+{
+name:"TOYOTA NOAH SI WXB 3 58889",
+price:"122,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"BLACK",
+mileage:"61,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/04afb5c1f2f50940ed7d16f8942c755e.jpeg",
+"https://img.sanishtech.com/u/c8c5fff8f304832ca226a4aac0d06a3a.jpeg",
+"https://img.sanishtech.com/u/728468ce2e1e238097a2d9b1368c1c12.jpeg",
+"https://img.sanishtech.com/u/00de41e62bf1b080b83de980854b34e1.jpeg",
+"https://img.sanishtech.com/u/14255a3f56bb717822db896bce703b7a.jpeg"
+],
+
+detail:"4.5, NAVI TV, BACK CAMERA, DIGITAL INNER MIRROR, 7 SEATER, 2 POWER DOOR, BLACK HALF LEATHER INTERIOR, TOYOTA SAFETY, PRE-CRASH, LANE DEPARTURE ALERT, MAKER ALLOY WHEELS, LED HEADLIGHT, FOG"
+},
+{
+name:"TOYOTA NOAH SI WXB 3 65315",
+price:"130,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"PEARL",
+mileage:"54,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/2383cd25381b5cdd06d850c508d467c1.jpeg",
+"https://img.sanishtech.com/u/32d70071e39b074f2228fdd8c97d4706.jpeg",
+"https://img.sanishtech.com/u/942cc9b0c7224f3ebdffbd0f9c8081a4.jpeg",
+"https://img.sanishtech.com/u/c2ce981329c88aa56318a51041eb4ef7.jpeg",
+"https://img.sanishtech.com/u/9e628ba7255f75757f722c9dee9e4857.jpeg"
+],
+
+detail:"4, NAVI TV, BACK CAMERA, REAR ENTERTAINMENT, 7 SEATER, 2 POWER DOOR, BLACK HALF LEATHER INTERIOR, TOYOTA SAFETY, PRE-CRASH, LANE DEPARTURE ALERT, MAKER ALLOY WHEELS, LED HEADLIGHT, FOG"
+},
+{
+name:"TOYOTA VOXY ZS KIRAMEKI 3 83144",
+price:"122,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"BLACK",
+mileage:"24,143 KM",
+
+images:[
+"https://img.sanishtech.com/u/a1d17e2c7cce2142e6b64e9d10c70931.jpeg",
+"https://img.sanishtech.com/u/c0bee7c679f7a3d1550af13d528c5235.jpeg",
+"https://img.sanishtech.com/u/145a2dca571797dcdd5509903abff3b4.jpeg",
+"https://img.sanishtech.com/u/84f8a27d8533463dcdc1f70d49ac9aef.jpeg",
+"https://img.sanishtech.com/u/4028452f2d8fad98d3ba1383416483a2.jpeg"
+],
+
+detail:"3.5B, HALF-LEATHER, DOP NAVI. TV, FLIP DOWN MONITOR, BACK CAMERA, 2 POWER SLIDE DOORS"
+},
+{
+name:"TOYOTA VOXY ZS KIRAMEKI 3 00854",
+price:"122,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"BLACK",
+mileage:"47,770 KM",
+
+images:[
+"https://img.sanishtech.com/u/e38c58d6bf0e0464a2ea0480f8e36bae.jpeg",
+"https://img.sanishtech.com/u/fce9bb004e798fa8eb8793708b3e897a.jpeg",
+"https://img.sanishtech.com/u/c5b4e36ebe94e16c549018303bee85a6.jpeg",
+"https://img.sanishtech.com/u/c051448c49c8240e47b75610178840be.jpeg",
+"https://img.sanishtech.com/u/ca62b6d12b3440114df8f98f28098e0a.jpeg"
+],
+
+detail:"4.5B, AFM NAVI, 2 POWER SLIDE DOOR"
+},
+{
+name:"TOYOTA VOXY ZS KIRAMEKI 3  94147",
+price:"122,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"PEARL",
+mileage:"44,800 KM",
+
+images:[
+"https://img.sanishtech.com/u/4d2084216ddd37d8fb9c25a0739c8202.jpeg",
+"https://img.sanishtech.com/u/80ec6a575cd54bc2b042a292763a515a.jpeg",
+"https://img.sanishtech.com/u/0024334ae0207c4d215278dab9b512aa.jpeg",
+"https://img.sanishtech.com/u/cb7af47298e78a5e3610c41ba6bc01a8.jpeg",
+"https://img.sanishtech.com/u/ec275500ca2243515affc48669284186.jpeg"
+],
+
+detail:"4B, AFM NAVI. TV, 2 POWER SLIDE DOORS"
+},
+{
+name:"TOYOTA VOXY ZS KIRAMEKI 3  98323",
+price:"122,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"BLACK",
+mileage:"58,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/c6bd4e489a8170ff2d21fc632ccd7141.jpeg",
+"https://img.sanishtech.com/u/fc114cd5780e63b68c3c3385ea2f7e8e.jpeg",
+"https://img.sanishtech.com/u/3f53b5cc2a9a016dd9558233237e8cae.jpeg",
+"https://img.sanishtech.com/u/39a2fb1f13d04c94354dfb3273693239.jpeg",
+"https://img.sanishtech.com/u/75df45620fb108cba0991379b6bfd8a2.jpeg"
+],
+
+detail:"4, NAVI TV, BACK CAMERA, 7 SEATER, 2 POWER DOOR, BLACK HALF LEATHER INTERIOR, TOYOTA SAFETY, PRE CRASH, LANE DEPARTURE ALERT, MAKER ALLOY WHEELS, LED HEADLIGHT, FOG"
+},
+{
+name:"TOYOTA VELLFIRE Z PREMIER 02491",
+price:"330,000",
+brand:"TOYOTA",
+year:"2023",
+colour:"WHITE",
+mileage:"22,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/76b797e5c6a934e06ff3be28e2182a0e.jpeg",
+"https://img.sanishtech.com/u/2c20dd29f8411ba60cfadaddd7d3274c.jpeg",
+"https://img.sanishtech.com/u/cb164057ea070ff29362fb5aeec3dbb2.jpeg",
+"https://img.sanishtech.com/u/84e85e3ef0e49d955a58433718a44300.jpeg",
+"https://img.sanishtech.com/u/2d2db4ddf1ba4d016ea8a0fecddd8592.jpeg"
+],
+
+detail:"5A ,SUNROOF ,MODELISTA BODYKIT ,STD LEATHER , DISPLAY AUDIO, 4 CAMERAS ,2 POWER SLIDE DOORS ,POWER BOOT 3-EYE LED ,DIGITAL INNER MIRROR ,BSM ,HUD"
+},
+{
+name:"TOYOTA VELLFIRE 2.5 Z Golden Eyes 2 89234",
+price:"180,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"PEARL",
+mileage:"34,541 KM",
+
+images:[
+"https://img.sanishtech.com/u/961abe38a0334686d60fe0aed2114fd1.jpeg",
+"https://img.sanishtech.com/u/92d8247f068b05162b81f35f05c87f9c.jpeg",
+"https://img.sanishtech.com/u/82e3de9c53b19b2dd5d92783aaed2fe9.jpeg",
+"https://img.sanishtech.com/u/66b1985aaa8b5d678543c2d4762b2a6d.jpeg",
+"https://img.sanishtech.com/u/dd9562a4b67f31117ba1294974d3e11e.jpeg"
+],
+
+detail:"5A, SUNROOF, HALF-LEATHER, DISPLAY AUDIO, BACK CAMERA, 2 POWER SLIDE DOORS ,POWER BOOT, 3-EYE LED, TOYOTA SAFETY SENSE, MODELLISTA AERO, AFM ALLOY WHEELS"
+},
+{
+name:"TOYOTA ALPHARD 2.5 Z 01628",
+price:"296,000",
+brand:"TOYOTA",
+year:"2023",
+colour:"BLACK",
+mileage:"3,350 KM",
+
+images:[
+"https://img.sanishtech.com/u/ae6a477c4371fc05da39be8cac0db971.jpeg",
+"https://img.sanishtech.com/u/f4a14db3dfeabbe2532e4b2a7329b211.jpeg",
+"https://img.sanishtech.com/u/88811ad705ae92a035e10a4243dd9a19.jpeg",
+"https://img.sanishtech.com/u/be016fb2769d53dd557f407b225c00b4.jpeg",
+"https://img.sanishtech.com/u/8ed9d580631e7366053db1e63618f92c.jpeg"
+],
+
+detail:"SUNROOF, DIM, UNIVERSAL STEP LEFT AND RIGHT, FLIP-DOWN MONITOR, 360 CAMERA, 2 POWER SLIDE DOORS, POWER BOOT, TOYOTA TEAM MATE SAFETY SYSTE"
+},
+{
+name:"TOYOTA ALPHARD 2.5SC PACKAGE 93597",
+price:"199,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"BLACK",
+mileage:"31,370 KM",
+
+images:[
+"https://img.sanishtech.com/u/3c8db2ec2dd8b5a90c85e356c1c330d0.jpeg",
+"https://img.sanishtech.com/u/4170128b729c62cc623421207bb83612.jpeg",
+"https://img.sanishtech.com/u/06df315635025fa2e9e242bdd5da79d1.jpeg",
+"https://img.sanishtech.com/u/d8585788ae2f7128ce47ef17a25fff2d.jpeg",
+"https://img.sanishtech.com/u/1887258bb7488a4d82d539cad7e7390a.jpeg"
+],
+
+detail:"4.5B, SUNROOF, STD LEATHER, MOP NAVI. TV, JBL, REAR ENTERTAINMENT, 4 CAMERAS, 2 POWER SLIDE DOORS , POWER BOOT, 3-EYE LED, BSM, TOYOTA SAFETY SENSE, MODELISTA BODYKIT"
+},
+{
+name:"TOYOTA ALPHARD 2.5S EDITION 7SEATER 56723",
+price:"190,000",
+brand:"TOYOTA",
+year:"2023",
+colour:"BLACK",
+mileage:"34,179 KM",
+
+images:[
+"https://img.sanishtech.com/u/d73b81f760338a19c2e85c632b616b1a.jpeg",
+"https://img.sanishtech.com/u/e0e83b534a0da55239eb24e5f7ede610.jpeg",
+"https://img.sanishtech.com/u/0da7ae39617de81a3065b7c99bd00e9f.jpeg",
+"https://img.sanishtech.com/u/7f6a179f6430fa5c490854e7284757fc.jpeg",
+"https://img.sanishtech.com/u/7f1a6197376be2c8adee926b680c5e8c.jpeg"
+],
+
+detail:"4.5B, SUNROOF, DISPLAY AUDIO, FLIP-DOWN MONITOR, 2
+POWER SLIDE DOOR"
+},
+{
+name:"TOYOTA ALPHARD 2.5 S EDITION 8SEATER 04902",
+price:"180,000",
+brand:"TOYOTA",
+year:"2022",
+colour:"PEARL",
+mileage:"53,016 KM",
+
+images:[
+"https://img.sanishtech.com/u/6a00357bd06de2e26c2fe3d8b6c24c23.jpeg",
+"https://img.sanishtech.com/u/1a8f7e61b75172b49caebecc831fd234.jpeg",
+"https://img.sanishtech.com/u/7a496b0f74671ac35fe44ea7a36808a8.jpeg",
+"https://img.sanishtech.com/u/d104822cafb9fed922eb76915c41f71a.jpeg",
+"https://img.sanishtech.com/u/cae3538ba68ea19998df1fc80f1fa19e.jpeg"
+],
+
+detail:"4B, SUNROOF, DISPLAY AUDIO, FLIP-DOWN MONITOR, BACK CAMERA, 2 POWER SLIDE DOORS, TOYOTA SAFETY SENSE, SEAT COVER ON, AFM ALLOY HEELS"
+},
+{
+name:"TOYOTA ALPHARD 2.5 X EDITION 8SEATER 57485",
+price:"145,000",
+brand:"TOYOTA",
+year:"2021",
+colour:"WHITE",
+mileage:"49,187 KM",
+
+images:[
+"https://img.sanishtech.com/u/d9a83a597ec40453f8bd23724abc51f4.jpeg",
+"https://img.sanishtech.com/u/f33d3d176fed1ff9e703d27bcf9ee4a2.jpeg",
+"https://img.sanishtech.com/u/d48a84a1486e9c0a963634bee859a09e.jpeg",
+"https://img.sanishtech.com/u/e8a184112b3836ef401f5a4fafd44a81.jpeg",
+"https://img.sanishtech.com/u/db13bd499210e1a5733719aa6e61f1de.jpeg"
+],
+
+detail:"3.5C ,DISPLAY AUDIO ,REAR MONITOR ,BACK CAMERA 2 POWER SLIDE DOORS, TOYOTA SAFETY SENSE"
+},
+{
+name:"LEXUS RX350 F SPORT 4WD 02533",
+price:"300,000",
+brand:"LEXUS",
+year:"2023",
+colour:"PEARL, BLACK INTERIOR",
+mileage:"24,444 KM",
+
+images:[
+"https://img.sanishtech.com/u/3d7aa87b2ba0886f4b579d297b116491.jpeg",
+"https://img.sanishtech.com/u/7fd36870804817796291e63df9cddb87.jpeg",
+"https://img.sanishtech.com/u/ea864f7828dab91588652d87242025f9.jpeg",
+"https://img.sanishtech.com/u/de71943a90d7cf7c46f4f0dee08cd39b.jpeg",
+"https://img.sanishtech.com/u/c7b3f47bfd9191942b9949de877aa92a.jpeg"
+],
+
+detail:"5A, PANORAMIC ROOF, HALF LEATHER, ORIGINAL NAVI. TV, 4CAMERAS, POWER BOOT, 3-EYE LED, BSM, HUD"
+},
+{
+name:"LEXUS RX350 F SPORT 4WD 00399",
+price:"300,000",
+brand:"LEXUS",
+year:"2023",
+colour:"PEARL, BLACK INTERIOR",
+mileage:"27,881 KM",
+
+images:[
+"https://img.sanishtech.com/u/31653158e75e4ed57f0a1f4762729e76.jpeg",
+"https://img.sanishtech.com/u/dc86d55d0654508cbecc74372d822aa7.jpeg",
+"https://img.sanishtech.com/u/b6775c280e7933f9fadff0b337a7f54b.jpeg",
+"https://img.sanishtech.com/u/48e501ef5a19edd48bd3a3df03c939d8.jpeg",
+"https://img.sanishtech.com/u/73ac54e370c8cc727432ff5c46462173.jpeg"
+],
+
+detail:"4.5A, PANORAMIC ROOF, HALF-LEATHER, ORIGINAL NAVI. TV, 4CAMERAS, POWER BOOT, 3-EYE LED, BSM, HUD"
+},
+{
+name:"LEXUS RX350 F SPORT 4WD 00988",
+price:"297,000",
+brand:"LEXUS",
+year:"2023",
+colour:"PEARL, RED INTERIOR",
+mileage:"29,830 KM",
+
+images:[
+"https://img.sanishtech.com/u/25638ead41f5fb406de9a9ceb50820d4.jpeg",
+"https://img.sanishtech.com/u/f13fe189a55b7fd712914276fb4ca222.jpeg",
+"https://img.sanishtech.com/u/8d1ece21b3f4cb7e7f736c7e2721e491.jpeg",
+"https://img.sanishtech.com/u/074ce8c17e911acaab636351ef89de32.jpeg",
+"https://img.sanishtech.com/u/f7b765dafeed2c5412fc4f744f85771e.jpeg"
+],
+
+detail:"4.5B, HALF LEATHER, ORIGINAL NAVI. TV, 4 CAMERAS, POWER BOOT, 3-EYE LED, BSM, HUD"
+},
+{
+name:"LEXUS RX450H VERSION L 4WD 24498",
+price:"346,000",
+brand:"LEXUS",
+year:"2021",
+colour:"BLACK",
+mileage:"21,376 KM",
+
+images:[
+"https://img.sanishtech.com/u/491fbc7c7543125bc5deacd7e2c99b25.jpeg",
+"https://img.sanishtech.com/u/93c5401cc1241c46d7120c4670bce130.jpeg",
+"https://img.sanishtech.com/u/2e85b5906962f5adf042e786014db950.jpeg",
+"https://img.sanishtech.com/u/f81eb5d9ea739a6a7dcea1c5748a4768.jpeg",
+"https://img.sanishtech.com/u/3ce42e1a34f0ff2aeb144025259f8325.jpeg"
+],
+
+detail:"FULLY LOADED, MODELISTA BODYKIT, MODELISTA MUFFLER, MODELISTA RIM"
+},
+{
+name:"MERCEDES BENZ A180 HATCHBACK AMG LINE SA1745",
+price:"178,000",
+brand:"MERCEDES",
+year:"2023",
+colour:"WHITE",
+mileage:"22,529 KM",
+
+images:[
+"https://img.sanishtech.com/u/7d04550d1d2bafaf9e189eaa67142576.jpeg",
+"https://img.sanishtech.com/u/7d04550d1d2bafaf9e189eaa67142576.jpeg",
+"https://img.sanishtech.com/u/73d95921d4e848ea8afa8a7b9a8e81dc.jpeg",
+"https://img.sanishtech.com/u/460887dd279937b110efff0f4fdfd559.jpeg",
+"https://img.sanishtech.com/u/c283cb0c091f6b9fd15ef9f500942369.jpeg"
+],
+
+detail:"5A, FULLY LOADED, PR, ADV PCKG , 360, HUD, RED LEATHER SEAT"
+},
+{
+name:"BMW 118I M SPORT EW253",
+price:"130,000",
+brand:"BMW",
+year:"2021",
+colour:"BLACK",
+mileage:"26,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/90999f85bc806d67360842afccd9fe1a.jpeg",
+"https://img.sanishtech.com/u/e8cad230bdb79dc9b791759b3112f0e0.jpeg",
+"https://img.sanishtech.com/u/bcb6b424aa4260eb3ac797e91d23e971.jpeg",
+"https://img.sanishtech.com/u/80e1ee8497c23a4c60182b8ed71badfa.jpeg",
+"https://img.sanishtech.com/u/36a2f347d073fd0d53a127d1ae46cfbf.jpeg"
+],
+
+detail:"NAVI TV, BACK CAM, 2 POWER SEAT, BLACK HALF LEATHER INT, CRUISE CONTROL , 18 AW"
+},
+{
+name:"BMW M2 BASE GRAD EW406",
+price:"360,000",
+brand:"BMW",
+year:"2023",
+colour:"BLACK",
+mileage:"11,516 KM",
+
+images:[
+"https://img.sanishtech.com/u/758a0991a496be9db001a1bd96dbf066.jpeg",
+"https://img.sanishtech.com/u/6bec376441448e2842bca31d5a3849cb.jpeg",
+"https://img.sanishtech.com/u/0a025f15e912552365535a65038ce24c.jpeg",
+"https://img.sanishtech.com/u/501cb333ea09286a9fc956ba28304b40.jpeg",
+"https://img.sanishtech.com/u/9a27c063af276a983f68e8e1172dda99.jpeg"
+],
+
+detail:"4.5AHIGHLINE PCKG, HARMAN KARDON, ALARM SYSTEM, BLACK LEATHER"
+},
+{
+name:"HONDA CIVIC TYPE R FL5 BM2228",
+price:"275,000",
+brand:"HONDA",
+year:"2023",
+colour:"BLUE",
+mileage:"7,951 KM",
+
+images:[
+"https://img.sanishtech.com/u/41cc6f1edd3a5c820cee5a4609e1c468.jpeg",
+"https://img.sanishtech.com/u/28bca947c0b25bcf8eb97a9e17e15c66.jpeg",
+"https://img.sanishtech.com/u/16eed33774d572516974db92aec91d30.jpeg",
+"https://img.sanishtech.com/u/3045ed51edadc29100378d184aee7483.jpeg",
+"https://img.sanishtech.com/u/587335d91f64a88a043b048329a7b007.jpeg"
+],
+
+detail:"5A, NAVI, TV, 19 AW"
+},
+{
+name:"HONDA CIVIC TYPE R FL5 BM2124",
+price:"260,000",
+brand:"HONDA",
+year:"2023",
+colour:"BLUE",
+mileage:"4152 KM",
+
+images:[
+"https://img.sanishtech.com/u/c041fa99bdaf876f86bbbba39faddd94.jpeg",
+"https://img.sanishtech.com/u/23c473aae553504941c2438f6d49b2ad.jpeg",
+"https://img.sanishtech.com/u/6b20a6bb27322cda1e80310332bc6cc0.jpeg",
+"https://img.sanishtech.com/u/44154e64d2c566b774e780cc0924d804.jpeg",
+"https://img.sanishtech.com/u/48f426cd7495e2f6f1c593127c9bdcc8.jpeg"
+],
+
+detail:"5A, FULL AEROKITS, REAR SPOILER, TV CAM"
+},
+{
+name:"HONDA CIVIC TYPE R FL5 DD204",
+price:"263,000",
+brand:"HONDA",
+year:"2024",
+colour:"WHITE",
+mileage:"2651 KM",
+
+images:[
+"https://img.sanishtech.com/u/005b3e5b8089152f95c2a693142e286d.jpeg",
+"https://img.sanishtech.com/u/d8e47a4d62a27ddd4864b07c77127f95.jpeg",
+"https://img.sanishtech.com/u/52cf8cbff928374bdeb0ffe168358898.jpeg",
+"https://img.sanishtech.com/u/bc268720388f177a42653274ae115faa.jpeg",
+"https://img.sanishtech.com/u/b1b5513a5fbb67cfd58262330ad6087f.jpeg"
+],
+
+detail:"TV, BACK CAM, CRUISE CONTROL, RED BREMBO CALIPERS, HONDA SENSING, DIGITAL METER"
+},
+{
+name:"HONDA CIVIC TYPE R FL5 SA1883",
+price:"270,000",
+brand:"HONDA",
+year:"2024",
+colour:"RED",
+mileage:"13,000 KM",
+
+images:[
+"https://img.sanishtech.com/u/b6405941544929e2467196946f14857b.jpeg",
+"https://img.sanishtech.com/u/67712293a3453fb0a5793a39a1324417.jpeg",
+"https://img.sanishtech.com/u/bc18e29a84868432a8b685e63f3f0fb7.jpeg",
+"https://img.sanishtech.com/u/5f1e3ef26c85d81cec24bb8a8551f3b8.jpeg",
+"https://img.sanishtech.com/u/d89379c2c7e2103a31b0ed0bcbc29e1c.jpeg"
+],
+
+detail:"5A, PUSH START, TV CAMERA"
+},
+{
+name:"HONDA CIVIC TYPE R FL5 AM471",
+price:"280,000",
+brand:"HONDA",
+year:"2025",
+colour:"RED",
+mileage:"4886 KM",
+
+images:[
+"https://img.sanishtech.com/u/80d4d972ddd7d7d7d5ab5fa5d475e0a7.jpeg",
+"https://img.sanishtech.com/u/ebb14d0001c328105a229d91ced2d6cb.jpeg",
+"https://img.sanishtech.com/u/66d38b12f5ff957cfd2bbe799a3f1e2d.jpeg",
+"https://img.sanishtech.com/u/370dafdc570764d5000946d04d0d9135.jpeg",
+"https://img.sanishtech.com/u/5b582b619896e81fb6482868d46d5898.jpeg"
+],
+
+detail:"6A, DOP NAVI. TV,"
+},
+{
+name:"HONDA CIVIC TYPE R FL5 EW415",
+price:"270,000",
+brand:"HONDA",
+year:"2024",
+colour:"GREY",
+mileage:"75 KM",
+
+images:[
+"https://img.sanishtech.com/u/df317b5b53fe6cdff0b2d5da05d951be.jpeg",
+"https://img.sanishtech.com/u/df46b83d8edec562da5010e8c0ffd86a.jpeg",
+"https://img.sanishtech.com/u/22e41db20acadcc9bbc5cb5436aad189.jpeg",
+"https://img.sanishtech.com/u/f8cb1416da8ded156605f6a944988820.jpeg",
+"https://img.sanishtech.com/u/317aa8ff15b297d0094695e9d722b467.jpeg"
+],
+
+detail:"6A, RED FLOORMAT"
+},
+{
+name:"HONDA CIVIC TYPE R RACING BLACK PCKG FL5 SA1775",
+price:"290,000",
+brand:"HONDA",
+year:"2025",
+colour:"BLUE",
+mileage:"10 KM",
+
+images:[
+"https://img.sanishtech.com/u/6071bc026a0cd90b70b32906b69f1f77.jpeg",
+"https://img.sanishtech.com/u/0a22a17bc39ce87e99d163ad562544eb.jpeg",
+"https://img.sanishtech.com/u/cbd7dd078c5ac71ac5b71a877f4a5d80.jpeg",
+"https://img.sanishtech.com/u/a96b48dc1c3c4614a2931df9761cd3eb.jpeg",
+"https://img.sanishtech.com/u/ab6a65dbb36313dad37e2d8b2ea02ac7.jpeg"
+],
+
+detail:"SA, TYPE R RACING BLACK PCKG"
+},
+{
+name:"HONDA CIVIC TYPE R RACING BLACK PCKG FL5 SA1776",
+price:"300,000",
+brand:"HONDA",
+year:"2025",
+colour:"RED",
+mileage:"48 KM",
+
+images:[
+"https://img.sanishtech.com/u/92cb9b613d9f3240bd60c3a00d5ba905.jpeg",
+"https://img.sanishtech.com/u/62844ad73a74f643c787b45af06d373e.jpeg",
+"https://img.sanishtech.com/u/9fbfeba5745a83336d64bbff09b20e6f.jpeg",
+"https://img.sanishtech.com/u/b2f4e2251173c54f4f5115bd1749fe06.jpeg",
+"https://img.sanishtech.com/u/5552ffcae18abce2a88042ae85f49fb8.jpeg"
+],
+
+detail:"SA, TYPE R RACING BLACK PCKG"
+},
+{
+name:"HONDA CIVIC EX FL1 AUTO DD234",
+price:"162,000",
+brand:"HONDA",
+year:"2022",
+colour:"BLUE",
+mileage:"28,463 KM",
+
+images:[
+"https://img.sanishtech.com/u/26bb93eddf2e3ed29b57716bffbe2345.jpeg",
+"https://img.sanishtech.com/u/a660db1f35532923ab12ddbe5f425494.jpeg",
+"https://img.sanishtech.com/u/525f0520d7805c048225f9d37000f401.jpeg",
+"https://img.sanishtech.com/u/2d20f6774b4caabacc3c03ca6448b3b5.jpeg",
+"https://img.sanishtech.com/u/853f85e3aa5204aec838a27766f82a80.jpeg"
+],
+
+detail:"4.5B, AT, BSM, HONDA SENSIING"
+},
+{
+name:"HONDA CIVIC EX FL1 DD186",
+price:"155,000",
+brand:"HONDA",
+year:"2022",
+colour:"BLACK",
+mileage:"26,708 KM",
+
+images:[
+"https://img.sanishtech.com/u/2beebafc7e8d624f0855823cf0550377.png",
+"https://img.sanishtech.com/u/5163880d42b82168f52207b7185077ce.png",
+"https://img.sanishtech.com/u/3134b39298dd876357f8067a12f6bbef.png",
+"https://img.sanishtech.com/u/28e8e8e19ed7cfdd6e12a6252a1fc2e2.png",
+"https://img.sanishtech.com/u/cda3a2120f4edf312c095f0de428178a.png"
+],
+
+detail:"4.5B, TV, BACK CAM, HALF LEATHER SEAT, CRUISE CONTROL, BOSE SOUND, HONDA SENSING, BSM, DIGITAL METER"
+},
+{
+name:"HONDA CIVIC EX FL1 DC468",
+price:"148,000",
+brand:"HONDA",
+year:"2021",
+colour:"BLACK",
+mileage:"45,272 KM",
+
+images:[
+"https://img.sanishtech.com/u/ec39a17373eba89d4f6b7c369c93d9c8.jpeg",
+"https://img.sanishtech.com/u/3b7be31b3af99e9167d723b07cedfb5d.jpeg",
+"https://img.sanishtech.com/u/61130a4b1b7bc35421c552e98473ad5f.jpeg",
+"https://img.sanishtech.com/u/7474c07ac7db4ae0159ccc268261250a.jpeg",
+"https://img.sanishtech.com/u/4a6a503c68f72efccb64dca4cae4f5f5.jpeg"
+],
+
+detail:"4.B, NAVI, AW, BOSE, BACK CAM, MUFFLER"
+},
+{
+name:"HONDA ODYSSEY 2.4 ABSOLUTE 7SEATER BMT2129",
+price:"155,000",
+brand:"HONDA",
+year:"2021",
+colour:"BLACK",
+mileage:"23,269 KM",
+
+images:[
+"https://img.sanishtech.com/u/f4aade5aac0e71999716f9bbed8461de.jpeg",
+"https://img.sanishtech.com/u/83c1c22a455545e47c3e39e4f5a36994.jpeg",
+"https://img.sanishtech.com/u/893ecba824393949486d932d3be03754.jpeg",
+"https://img.sanishtech.com/u/3a2ad770c2c1b93df54e9269458ed385.jpeg",
+"https://img.sanishtech.com/u/25c55b595eb194635e9d3f91a00b8a7f.jpeg"
+],
+
+detail:"4.5, PUSH START BUTTOM, REVERSE CAMERA, CEILING TV"
+},
+{
+name:"HONDA STEPWAGON 1.5 SPADA 7 SEATER BMT2232",
+price:"165,000",
+brand:"HONDA",
+year:"2022",
+colour:"WHITE",
+mileage:"25,273 KM",
+
+images:[
+"https://img.sanishtech.com/u/4d20356f7efd6fdb82f31ef576b03a4e.jpeg",
+"https://img.sanishtech.com/u/8e2974738545015493c7086287e0826d.jpeg",
+"https://img.sanishtech.com/u/7242686af85c9eb1b4456847910610fe.jpeg",
+"https://img.sanishtech.com/u/0653176b88199019b982b1878bc72849.jpeg",
+"https://img.sanishtech.com/u/09781bd9cc15dde9011845f34ba5762b.jpeg"
+],
+
+detail:"3 PD, 1 TV, BACK CAM, HALF LEATHER SEAT, HONDA SENSING, CRUISE CONTROL"
+},
+{
+name:"HONDA STEPWAGON 1.5 SPADA 7SEATER DD245",
+price:"165,000",
+brand:"HONDA",
+year:"2022",
+colour:"BLACK",
+mileage:"37,859 KM",
+
+images:[
+"https://img.sanishtech.com/u/1151a686c413eaae01e6a2ae4f89c690.jpeg",
+"https://img.sanishtech.com/u/1bae388f0280dcbf88a06c62d3fc260e.jpeg",
+"https://img.sanishtech.com/u/7aefea4adc552d1ea615a629ce47aeae.jpeg",
+"https://img.sanishtech.com/u/ac3f4fcc6b9fe050c2805b4c7c32c086.jpeg",
+"https://img.sanishtech.com/u/a46896ef3bc1fa1adab386367b27fbc1.jpeg"
+],
+
+detail:"HONDA SENSING, BSM, 3 POWER DOOR"
+},
+{
+name:"HONDA STEPWAGON 1.5 SPADA 7 SEATER BMT2129",
+price:"170,000",
+brand:"HONDA",
+year:"2023",
+colour:"BLACK",
+mileage:"39,118 KM",
+
+images:[
+"https://img.sanishtech.com/u/53090c1c463ea333058c8f123d421b7e.jpeg",
+"https://img.sanishtech.com/u/c7603f64311c45f55568ef4e7689fc3e.jpeg",
+"https://img.sanishtech.com/u/7f3984b053d942ff382c47b13646aa98.png",
+"https://img.sanishtech.com/u/b33ddce3de7de50bd8e75635a036fce7.png",
+"https://img.sanishtech.com/u/e748dfaaf51af089f27897cd633ab8e9.jpeg"
+],
+
+detail:"4A, PD, 2 TV, MULTI VIEW CAM, HALF LEATHER, HONDA SENSING, CRUISE CONTROL"
+},
+{
+name:"HONDA STEPWAGON 1.5 SPADA 7 SEATER BMT2198",
+price:"170,000",
+brand:"HONDA",
+year:"2023",
+colour:"DARKBLUE",
+mileage:"33,600 KM",
+
+images:[
+"https://img.sanishtech.com/u/f60b3bb92213639f77616147f981a767.jpeg",
+"https://img.sanishtech.com/u/0a118efa938e1817c9fce1c5a8341194.jpeg",
+"https://img.sanishtech.com/u/ce24abf020628bd547ad4b6ee650c472.jpeg",
+"https://img.sanishtech.com/u/f6f190c3428c65d202f8e36bec67e539.jpeg",
+"https://img.sanishtech.com/u/dcbc02e530c1bef9b4f37a4c9740269c.jpeg"
+],
+
+detail:"4.5B, 3 PD, 1 TV, BACK CAM, HALF LEATHER, HONDA SENSING, BSM, CRUISE CONTROL"
+},
+{
+name:"LAND ROVER DEFENDER P400 XS EDITION SA782",
+price:"460,000",
+brand:"LAND",
+year:"2021",
+colour:"SILVER",
+mileage:"32967 KM",
+
+images:[
+"https://img.sanishtech.com/u/87edd8dc0ed00cab27af30b3c096f9d1.jpeg",
+"https://img.sanishtech.com/u/8c05a9b2cbd7efaa2b55767206e3a100.jpeg",
+"https://img.sanishtech.com/u/adcdda97af8c2bcfad820b77253d9772.jpeg",
+"https://img.sanishtech.com/u/152290b8f04e58505466bbd090b7a47b.jpeg",
+"https://img.sanishtech.com/u/c80f259b816bec8266c92fd28087e833.jpeg"
+],
+
+detail:"SUNROOF, PANORAMIC ROOF, LED LIGHT, FULL LEATHER SEAT, 2x ELECTRIC SEAT, DIGITAL INNER MIRROW, BLIND SPORT MONITOR"
+},
+{
+name:"LEXUS LBX MORIZO RR AUTO EW257",
+price:"288,000",
+brand:"LEXUS",
+year:"2024",
+colour:"WHITE",
+mileage:"3500 KM",
+
+images:[
+"https://img.sanishtech.com/u/f8e7029d88453af61a9fbeaedfef5599.jpeg",
+"https://img.sanishtech.com/u/cb9caeef6681da3b7543b07aaed29571.jpeg",
+"https://img.sanishtech.com/u/4479298e085f13431f9e11bf7dc850eb.jpeg",
+"https://img.sanishtech.com/u/520c768332aed5faccdc589662b44e29.jpeg",
+"https://img.sanishtech.com/u/e87801b42d4ecdd5ec09a31e1409682d.jpeg"
+],
+
+detail:"6A, 4 CAM, BLACK LEATHER SEAT, BSM, HUD, PB, 19 AW"
+},
+{
+name:"LEXUS IS300 F SPORT MODE BLACK MODE BM1981",
+price:"210,000",
+brand:"LEXUS",
+year:"2020",
+colour:"WHITE",
+mileage:"36,634 KM",
+
+images:[
+"https://img.sanishtech.com/u/ce053c26bbbcfc5201076503feadd07f.jpeg",
+"https://img.sanishtech.com/u/ae860bce6f709a8a725dea3d57373c8d.jpeg",
+"https://img.sanishtech.com/u/8ae3117f35bd2b7415da829be8e09484.jpeg",
+"https://img.sanishtech.com/u/b7edf615574f8ea9ca9ced7741eb8c74.jpeg",
+"https://img.sanishtech.com/u/b863f718d29b905df1b643ec54604f19.jpeg"
+],
+
+detail:"4.5B, SR, TV, PANOCAM, RED LEATHER SEAT INT, PRECRASH, BSM, ORANGE CALIPER"
+},
+{
+name:"LEXUS LM500H EXECUTIVE EW407",
+price:"782,000",
+brand:"LEXUS",
+year:"2024",
+colour:"GREY",
+mileage:"6000 KM",
+
+images:[
+"https://img.sanishtech.com/u/bff5681d65cb33f12bd8a432c01ba112.jpeg",
+"https://img.sanishtech.com/u/e53b3e411babdd282ea3ad1ec50d9fe9.jpeg",
+"https://img.sanishtech.com/u/111dd13c50b9cad7f585b010cf325bbc.jpeg",
+"https://img.sanishtech.com/u/e50231922790b9c23d7bb441f215e0e1.jpeg",
+"https://img.sanishtech.com/u/41b293ade4c2480543332a80dae769c6.jpeg"
+],
+
+detail:"5A, 4 SEATER, MODELLISTA (BODYKIT,19 RIMS, SIGNATURE CHROME SELECTION"
+},
+{
+name:"MAZDA ROADSTAR RF RS MT SA1672",
+price:"170,000",
+brand:"MAZDA",
+year:"2022",
+colour:"WHITE",
+mileage:"16,500 KM",
+
+images:[
+"https://img.sanishtech.com/u/df0213cc1861636cb980a600b2560acf.jpeg",
+"https://img.sanishtech.com/u/7b4d720be8bb92fedd75f10275966a7a.jpeg",
+"https://img.sanishtech.com/u/6b03d3b6641eab27294e647c3b4dbba1.jpeg",
+"https://img.sanishtech.com/u/896865f78605474321b1809ce0ab02b5.jpeg",
+"https://img.sanishtech.com/u/217aba0fc00eade2d65a63d342235be3.jpeg"
+],
+
+detail:"5A, BOSE, 16 ALLOYS, RECARO SEATS, HALF LEATHER, MAZDA SPORT BODYKIT FRS"
+},
+{
+name:"MERCEDES BENZ AMG A35 4MATIC SEDAN EW368",
+price:"233,000",
+brand:"MERCEDES",
+year:"2022",
+colour:"WHITE",
+mileage:"23,647 KM",
+
+images:[
+"https://img.sanishtech.com/u/f64ab903279c346438f74df46772fef6.jpeg",
+"https://img.sanishtech.com/u/29bcda195519ab9b3abdfb3e7373f686.jpeg",
+"https://img.sanishtech.com/u/c6fa5b7f815fa29f09e1381252086c6b.jpeg",
+"https://img.sanishtech.com/u/6099df9f34251868550fdced20491cd2.jpeg",
+"https://img.sanishtech.com/u/13bbbc85fb809b7f8d62875befc3eaf9.jpeg"
+],
+
+detail:"4.5B, FULLY LOADED, PR, AMG PERFORMANCE, AMG ADV, 360, HUD, GREY/BLACK LEATHER"
+},
+{
+name:"MERCEDES BENZ A45 S 4MATIC PLUS AM437",
+price:"255,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"GREY",
+mileage:"17,638 KM",
+
+images:[
+"https://img.sanishtech.com/u/5693f53b655415ce8d40d517757c98b4.jpeg",
+"https://img.sanishtech.com/u/dcc156b1dc535d178d1df6fbef34d5c7.jpeg",
+"https://img.sanishtech.com/u/5459f80c18f727756a3681ed17bbbb5f.jpeg",
+"https://img.sanishtech.com/u/8242a297c4b9885366e5e1c5d3cdd32f.jpeg",
+"https://img.sanishtech.com/u/1523dccc4fecb7d08d515376926095cc.jpeg"
+],
+
+detail:"4.5A, FULLY LOADED, PR, AMG ADV, AMG PERFORMANCE, RED/BLACK LEATHER"
+},
+{
+name:"MERCEDES BENZ A180 AMG LINE SA1506",
+price:"159,000",
+brand:"MERCEDES",
+year:"2022",
+colour:"RED",
+mileage:"22,946 KM",
+
+images:[
+"https://img.sanishtech.com/u/94f18e9e24b438e39815f01f91db771d.jpeg",
+"https://img.sanishtech.com/u/c79d5669f8b7451e60600c14b9217b53.jpeg",
+"https://img.sanishtech.com/u/4cba134f0541f03aa3574845fccd4eaf.jpeg",
+"https://img.sanishtech.com/u/fefab914473bb154e78e959860e72fb1.jpeg",
+"https://img.sanishtech.com/u/9c7365d18347e0f3b155146799ee7775.jpeg"
+],
+
+detail:"4.5B, NAVI, RADAR SAFETY, HALF LEATHER"
+},
+{
+name:"MERCEDES BENZ A180 STYLE SEDAN DD251",
+price:"163,000",
+brand:"MERCEDES",
+year:"2023",
+colour:"RED",
+mileage:"27,583 KM",
+
+images:[
+"https://img.sanishtech.com/u/5beaa3652d28ee0c1405a39103f18764.jpeg",
+"https://img.sanishtech.com/u/51a6635dbdc3c83a1f1d32b0be388c61.jpeg",
+"https://img.sanishtech.com/u/d5a5035d9f41c29f7ebb4cbe17da1696.jpeg",
+"https://img.sanishtech.com/u/c667d20e68648e8b1fff84c4e0a5a3ba.jpeg",
+"https://img.sanishtech.com/u/4a32a7d338702cb028a4516c725626c9.jpeg"
+],
+
+detail:"4.5B, PADDLE SHIFT,MEMORY ELECT. SEATS,HALF LEATHER SEATS,AMBIENT LIGHT,BSM,REV. CAMERA,16 SPORT RIMS"
+},
+{
+name:"MERCEDES BENZ A180 HATCHBACK AMG LINE SA1745",
+price:"178,000",
+brand:"MERCEDES",
+year:"2023",
+colour:"WHITE",
+mileage:"22,529 KM",
+
+images:[
+"https://img.sanishtech.com/u/ecff0de245b3a0fb8c1889d64cea2855.jpeg",
+"https://img.sanishtech.com/u/88c0ff430c277895a91cc99374932426.jpeg",
+"https://img.sanishtech.com/u/1e0186601e0d9802fab5319315e5c416.jpeg",
+"https://img.sanishtech.com/u/6ad05089cd027daef1f7758e4eb034d8.jpeg",
+"https://img.sanishtech.com/u/8e07c4177ffb268ad2c9bd8ae2843bf2.jpeg"
+],
+
+detail:"5A, FULLY LOADED, PR, ADV PCKG , 360, HUD, RED LEATHER SEAT"
+},
+{
+name:"MERCEDES BENZ B180 AMG LINE DD253",
+price:"140,000",
+brand:"MEECEDES",
+year:"2021",
+colour:"SILVER",
+mileage:"41,250 KM",
+
+images:[
+"https://img.sanishtech.com/u/1b5eceb45263a38c4933e0d6e231472a.jpeg",
+"https://img.sanishtech.com/u/acbb6f9797ac1897775cf52e5a74fc3b.jpeg",
+"https://img.sanishtech.com/u/30fe76fe1212f7913de0b83bb24705c2.jpeg",
+"https://img.sanishtech.com/u/0174dab682bff153007400412fb1a08c.jpeg",
+"https://img.sanishtech.com/u/220fec58b7b5b080b7ef08a8f68d147e.jpeg"
+],
+
+detail:"4C, MEMORY ELETR. SEATS,HALF LEATHER SEATS, HUD, BSM,AMBIENT LIGHT, 4 CAMERA,PADDLE SHIFT,POWER BOOT"
+},
+{
+name:"MERCEDES BENZ B180 AMG LINE DD254",
+price:"140,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"BLACK",
+mileage:"41,783 KM",
+
+images:[
+"https://img.sanishtech.com/u/ed95f80cbe613bb4b7402b50b8ab4d9a.jpeg",
+"https://img.sanishtech.com/u/5ea0f9e32c412074362f3e20c9cf04b9.jpeg",
+"https://img.sanishtech.com/u/ce6c117a015ebb433b70d19172db1b7a.jpeg",
+"https://img.sanishtech.com/u/747614585cdcf78ecab5e29bda2028fa.jpeg",
+"https://img.sanishtech.com/u/125efb019fb7dc0e70477d5d7a607eaf.jpeg"
+],
+
+detail:"5A, PADDLE SHIFT,AMBIENT LIGHT,MEMORY ELECT. SEATS,H/LEATHER SEATS, REV. CAMERA,18 SPORT RIMS,"
+},
+{
+name:"MERCEDES BENZ B180 AMG LINE DD252",
+price:"140,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"WHITE",
+mileage:"21,371 KM",
+
+images:[
+"https://img.sanishtech.com/u/d96f809a80a9c46ce9c89fc6d8602295.jpeg",
+"https://img.sanishtech.com/u/edf828e0f6e93b0af0eb98bd2a384545.jpeg",
+"https://img.sanishtech.com/u/99469d16b1cd8681c736a5395ee0c22c.jpeg",
+"https://img.sanishtech.com/u/a14041ad9b858006d1fc775a239b031f.jpeg",
+"https://img.sanishtech.com/u/7f202ae82aafcf26d9ac6ffe1769860f.jpeg"
+],
+
+detail:"3.5B, PADDLE SHIFT,HUD,BSM,MEMORY ELECT. SEATS,AMBIENT LIGHT, HALF LEATHER SEATS'POER BOOT, 18 SPORT RIM"
+},
+{
+name:"MERCEDES BENZ C200 LAUREUS EDITION BM2003",
+price:"155,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"WHITE",
+mileage:"38,893 KM",
+
+images:[
+"https://img.sanishtech.com/u/a34218c0baf1c08a5641e72e323f0071.jpeg",
+"https://img.sanishtech.com/u/26f53f231bf74361be7c2c17643ed08a.jpeg",
+"https://img.sanishtech.com/u/830f242c1806f21b323361fc61dd243c.jpeg",
+"https://img.sanishtech.com/u/038e0ea2ecd67e1663fcc61bb2645731.jpeg",
+"https://img.sanishtech.com/u/a750fe44ad964ffc2d8ed6c5857974b9.jpeg"
+],
+
+detail:"4.5B, IMITATION BLACK LEATHER SEAT, LEATHER EXCLUSIVE PCKG, PB, 1 CAM, BSM"
+},
+{
+name:"MERCEDES BENZ C200 LAUREUS ED SPORT PLUS SA1954",
+price:"165,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"WHITE",
+mileage:"14,258 KM",
+
+images:[
+"https://img.sanishtech.com/u/6235dff0170d1ce02ee6c9606420e28c.jpeg",
+"https://img.sanishtech.com/u/6d2a2b187e4720800a36dec31ad70777.jpeg",
+"https://img.sanishtech.com/u/29b343f656da6c0e0612fc03201a2d76.jpeg",
+"https://img.sanishtech.com/u/c10a73ac75daeed968e9206fb32edd0e.jpeg",
+"https://img.sanishtech.com/u/44bdcc650df0e751ce8341e6a4de292d.jpeg"
+],
+
+detail:"5BDUAL MEMORY SEAT, LED HEADLIGHTS, LEATHER SEAT, HUD"
+},
+{
+name:"MERCEDES BENZ C200 LAUREUS ED SPORT PLUS BM2225",
+price:"160,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"SILVER",
+mileage:"16,935 KM",
+
+images:[
+"https://img.sanishtech.com/u/4248285348053334c7dbbbbcbc7eadf6.jpeg",
+"https://img.sanishtech.com/u/f0b852b9335077d3000bafb1c0e1343d.jpeg",
+"https://img.sanishtech.com/u/926bdb94b7d75a1524f53ff802b067a4.jpeg",
+"https://img.sanishtech.com/u/437b596ea524b7ec67479ca2f72f2b99.jpeg",
+"https://img.sanishtech.com/u/fabc190caac7bea856cea3a4466d4f7d.jpeg"
+],
+
+detail:"4.5B, HUD, PB, SPORT+ PACKAGE"
+},
+{
+name:"MERCEDES BENZ C200 AVG AMG LINE BM1908",
+price:"220,000",
+brand:"MERCEDES",
+year:"2022",
+colour:"GREY",
+mileage:"16,344 KM",
+
+images:[
+"https://img.sanishtech.com/u/8c4c739bb6a359fc732ee4d4a2f3ab5c.jpeg",
+"https://img.sanishtech.com/u/974e153ba66b479cb9adeaeebe7bf58d.jpeg",
+"https://img.sanishtech.com/u/530e3f20faf8cc5b8dd926827284552b.jpeg",
+"https://img.sanishtech.com/u/5671f776dc63920d9596589c354015ca.jpeg",
+"https://img.sanishtech.com/u/fb3a1abddaef9c6acb1201678d4e2648.jpeg"
+],
+
+detail:"4.5B, REAR AXLE STEERING, LEATHER EXCLUSIVE PCKG, 3 USB INTERFACE, HUD, PB, 360 CAMERA"
+},
+{
+name:"MERCEDES BENZ C200 AVANTGARDE AMG LINE PSZ452",
+price:"220,000",
+brand:"MERCEDES",
+year:"2022",
+colour:"SILVER",
+mileage:"18,145 KM",
+
+images:[
+"https://img.sanishtech.com/u/f75558b65959c3bdfbfbe288e74f438d.jpeg",
+"https://img.sanishtech.com/u/4302c202a15dd07538c1bce692a0afbb.jpeg",
+"https://img.sanishtech.com/u/936e10efa81d745830be5dd452aad897.jpeg",
+"https://img.sanishtech.com/u/00fe371eaa9656b45c3f4ffcde9112bb.jpeg",
+"https://img.sanishtech.com/u/d5b578dccb2383326adbd28719b7be23.jpeg"
+],
+
+detail:"PR, BROWN LEATHER, 360 CAM"
+},
+{
+name:"MERCEDES BENZ C200 AVANTGARDE ISG AMG LINE DC522",
+price:"220,000",
+brand:"MERCEDES",
+year:"2022",
+colour:"WHITE",
+mileage:"12,488 KM",
+
+images:[
+"https://img.sanishtech.com/u/7ca78083797e85daf3fe0d5739e7df09.jpeg",
+"https://img.sanishtech.com/u/bf9092a1bed30453321f47a924293a24.jpeg",
+"https://img.sanishtech.com/u/6fd9726e78307bb146011eb613074fcd.jpeg",
+"https://img.sanishtech.com/u/fb6662d711125b7407885eafed0abe27.jpeg",
+"https://img.sanishtech.com/u/77f822c28e0c4bd25cf0a05ed294422f.jpeg"
+],
+
+detail:"4.5B, NO REAR AXLE, NO BURMESTER, PR, BLACK LEATHER, HUD, 360 CAM, 2 MEMORY, PB, AMG LINE"
+},
+{
+name:"MERCEDES BENZ C200 AVANTGARDE ISG AMG LINE DC251",
+price:"200,000",
+brand:"MERCEDES",
+year:"2021",
+colour:"BLACK",
+mileage:"45,689 KM",
+
+images:[
+"https://img.sanishtech.com/u/8e3f7a2f55cd606605097e51c0b2f18a.jpeg",
+"https://img.sanishtech.com/u/9f3cdd40e584ecacb0d2db9eb9df09fb.jpeg",
+"https://img.sanishtech.com/u/20cda4c3c61f7006d896e31814661a30.jpeg",
+"https://img.sanishtech.com/u/9201be703ebef386499f94cf8f3b9d87.jpeg",
+"https://img.sanishtech.com/u/1fbf93446f8af4e8ce4cc85e30710690.jpeg"
+],
+
+detail:"4.5B, NAVI, TV, SR, BURMESTER, 360 CAMERA"
+},
+{
+name:"MERCEDES BENZ CLA35 4MATIC DC253",
+price:"258,000",
+brand:"MERCEDES",
+year:"2020",
+colour:"YELLOW",
+mileage:"19,350 KM",
+
+images:[
+"https://img.sanishtech.com/u/1057ccba887968132e2b9a682320f685.jpeg",
+"https://img.sanishtech.com/u/c81a0bdf9539fb2ec6119c55964ada5a.jpeg",
+"https://img.sanishtech.com/u/1bb8703b50c353fcf175b5212a5143fe.jpeg",
+"https://img.sanishtech.com/u/58078526b5b53970ea4a15e7b9afcd24.jpeg",
+"https://img.sanishtech.com/u/2f40b7d5510e96db5845bf4659b6b868.jpeg"
+],
+
+detail:"4.5B, SUNROOF, 360 CAM, AMG SPORT SEAT"
+},
+{
+name:"MERCEDES BENZ AMG CLA35 4MATIC PSZ460",
+price:"315,000",
+brand:"MERCEDES",
+year:"2024",
+colour:"YELLOW",
+mileage:"8,126 KM",
+
+images:[
+"https://img.sanishtech.com/u/da43647f7d5f17259ec5b11caf4ad5e7.jpeg",
+"https://img.sanishtech.com/u/84e5649aa6c4ee52a4ec53ac49ec7b1f.jpeg",
+"https://img.sanishtech.com/u/770642a581e177c3d09ef3e7a07433d1.jpeg",
+"https://img.sanishtech.com/u/74d6fa91a6aabf9b2c6a7cb3f53d4bfe.jpeg",
+"https://img.sanishtech.com/u/b54045b962afe64ef797db2d80c1e5c8.jpeg"
+],
+
+detail:"5A, PERFORMANCE PKG, ADVANCED PKG, PR"
+},
+];
+
+/* ===== SLIDER ===== */
+
+function moveSlide(name,dir){
+
+let id=getId(name);
+
+if(sliderState[id]===undefined) sliderState[id]=0;
+
+let total=document.querySelectorAll("#slider-"+id+" img").length;
+
+sliderState[id]+=dir;
+
+if(sliderState[id]<0) sliderState[id]=total-1;
+if(sliderState[id]>=total) sliderState[id]=0;
+
+updateSlider(id);
+}
+
+function goSlide(name,index){
+let id=getId(name);
+sliderState[id]=index;
+updateSlider(id);
+}
+
+function updateSlider(id){
+
+let track=document.querySelector("#slider-"+id+" .slider-track");
+if(!track)return;
+
+let index=sliderState[id] || 0;
+
+track.style.transform=`translateX(-${index*100}%)`;
+
+document.querySelectorAll("#dots-"+id+" .dot").forEach((dot,i)=>{
+dot.classList.toggle("active",i===index);
+});
+}
+
+/* ===== AUTO SLIDE SETIAP CARD ===== */
+
+function startAuto(id){
+
+if(autoTimers[id]) clearInterval(autoTimers[id]);
+
+autoTimers[id]=setInterval(()=>{
+moveSlide(id,1);
+},4000);
+}
+
+/* ===== TOUCH INDIVIDUAL ===== */
+
+function attachSwipe(id){
+
+let slider=document.getElementById("slider-"+id);
+if(!slider)return;
+
+let startX=0;
+let endX=0;
+
+slider.addEventListener("touchstart",(e)=>{
+startX=e.touches[0].clientX;
+},{passive:true});
+
+slider.addEventListener("touchend",(e)=>{
+endX=e.changedTouches[0].clientX;
+
+let diff=startX-endX;
+
+if(Math.abs(diff)>50){
+if(diff>0) moveSlide(id,1);
+else moveSlide(id,-1);
+}
+},{passive:true});
+}
+
+/* ===== RENDER ===== */
+
+function renderCars(){
+
+let list=document.getElementById("list");
+
+let search=document.getElementById("search").value.toLowerCase();
+let brandSearch=document.getElementById("brandSearch").value.toLowerCase();
+let yearSearch=document.getElementById("yearSearch").value.toLowerCase();
+let colorSearch=document.getElementById("colorSearch").value.toLowerCase();
+
+list.innerHTML="";
+
+allCars.forEach(c=>{
+
+let price=priceNum(c.price);
+
+let brandMatch=(currentBrand==="all"||c.brand===currentBrand)&&c.brand.toLowerCase().includes(brandSearch);
+let yearMatch=(currentYear==="all"||c.year===currentYear)&&c.year.toLowerCase().includes(yearSearch);
+let colourMatch=(currentColour==="all"||c.colour===currentColour)&&c.colour.toLowerCase().includes(colorSearch);
+let searchMatch=c.name.toLowerCase().includes(search);
+let priceMatch=price>=minPrice*1000 && price<=maxPrice*1000;
+
+if(brandMatch&&yearMatch&&colourMatch&&searchMatch&&priceMatch){
+
+let id=getId(c.name);
+
+list.innerHTML+=`
+<div class="card">
+
+<div class="slider" id="slider-${id}">
+<div class="slider-track">
+${c.images.map(img=>`<img src="${img}">`).join('')}
+</div>
+
+<button class="slider-btn prev" onclick="moveSlide('${c.name}',-1)">❮</button>
+<button class="slider-btn next" onclick="moveSlide('${c.name}',1)">❯</button>
+</div>
+
+<div class="dots" id="dots-${id}">
+${c.images.map((x,i)=>`
+<span class="dot ${i===0?'active':''}" onclick="goSlide('${c.name}',${i})"></span>
+`).join('')}
+</div>
+
+<h2>RM ${c.price}</h2>
+<h3>${c.name}</h3>
+<p>🏷 Brand: ${c.brand}</p>
+<p>📅 Tahun: ${c.year}</p>
+<p>🎨 Colour: ${c.colour}</p>
+<p>📊 Mileage: ${c.mileage}</p>
+<p>📝 Detail: ${c.detail}</p>
+
+<button class="loan-btn" onclick="applyLoan('${c.name}','${c.price}')">
+📲 APPLY LOAN
+</button>
+
+</div>
+`;
+
+setTimeout(()=>{
+attachSwipe(id);
+startAuto(id);
+updateSlider(id);
+},50);
+
+}
+
+});
+
+}
+
+function applyLoan(model,price){
+
+let name=prompt("Nama anda:");
+if(!name)return;
+
+let salary=prompt("Gaji bulanan:");
+if(!salary)return;
+
+let msg=`
+🚗 APPLY LOAN REQUEST
+
+Model: ${model}
+Harga: RM${price}
+
+👤 Nama: ${name}
+💼 Gaji: ${salary}
+
+📌 Sila semak kelayakan loan & monthly installment`;
+
+window.location="https://wa.me/"+phone+"?text="+encodeURIComponent(msg);
+}
+
+renderCars();
+
+</script>
+
+</body>
+</html>
